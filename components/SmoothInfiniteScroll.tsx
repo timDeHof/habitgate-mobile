@@ -95,6 +95,8 @@ const SmoothInfiniteScroll = ({
       ref={scrollRef}
       scrollEnabled={false}
       showsVerticalScrollIndicator={false}
+      accessibilityElementsHidden={true}
+      importantForAccessibility="no-hide-descendants"
     >
       {items.map((item, idx) => (
         <View
