@@ -104,7 +104,6 @@ const styles = StyleSheet.create({
   tagline: {
     fontSize: Typography.fontSize["3xl"],
     fontFamily: Typography.fontFamily.brandBold,
-    // textAlign: "",
     marginBottom: 50,
     lineHeight: 30,
   },

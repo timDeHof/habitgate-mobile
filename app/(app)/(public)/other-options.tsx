@@ -13,6 +13,7 @@ const Page = () => {
   const { setIsGuest } = useUserStore();
   const continueAsGuest = () => {
     setIsGuest(true);
+    router.replace("/(auth)" as any);
   };
   return (
     <View style={styles.container}>
@@ -22,7 +23,7 @@ const Page = () => {
       >
         <Ionicons name="close" size={24} />
       </TouchableOpacity>
-      <Text style={styles.title}>Log in or create a Wolt account</Text>
+      <Text style={styles.title}>Log in or create a HabitGate account</Text>
       <View style={styles.buttonContainer}>
         <Animated.View entering={FadeInDown.delay(100)}>
           {/* Apple auth */}
