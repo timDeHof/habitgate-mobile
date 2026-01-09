@@ -1,5 +1,11 @@
-import { Platform } from "react-native";
-export const Shadows = {
+import { Platform, ViewStyle } from "react-native";
+
+export type Shadows = {
+  md: ViewStyle;
+  lg: ViewStyle;
+};
+
+export const Shadows: Shadows = {
   md: Platform.select({
     ios: {
       shadowColor: "#000",
@@ -10,6 +16,7 @@ export const Shadows = {
     android: {
       elevation: 4,
     },
+    default: {},
   }),
   lg: Platform.select({
     ios: {
@@ -21,5 +28,6 @@ export const Shadows = {
     android: {
       elevation: 8,
     },
+    default: {},
   }),
 };
