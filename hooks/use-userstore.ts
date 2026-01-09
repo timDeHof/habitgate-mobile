@@ -2,11 +2,14 @@ import zustandStorage from "@/utils/zustandStorage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+// Define User type - using unknown for dynamic/unpredictable user structures
+type User = unknown;
+
 interface UserStore {
   isGuest: boolean;
-  user: any;
+  user: User | null;
   setIsGuest: (isGuest: boolean) => void;
-  setUser: (user: any) => any;
+  setUser: (user: User) => void;
 }
 
 const useUserStore = create<UserStore>()(
@@ -15,7 +18,7 @@ const useUserStore = create<UserStore>()(
       isGuest: false,
       user: null,
       setIsGuest: (isGuest: boolean) => set({ isGuest }),
-      setUser: (user: any) => set({ user }),
+      setUser: (user: User) => set({ user }),
     }),
     {
       name: "user",

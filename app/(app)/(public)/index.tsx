@@ -32,13 +32,7 @@ export default function Index() {
         </View>
         <LinearGradient
           colors={["transparent", "#fff"]}
-          style={{
-            position: "absolute",
-            height: 200,
-            left: 0,
-            bottom: 0,
-            right: 0,
-          }}
+          style={styles.gradientStyle}
         />
       </View>
 
@@ -148,5 +142,12 @@ const styles = StyleSheet.create({
     gap: 4,
     position: "relative",
     overflow: "hidden",
+  },
+  gradientStyle: {
+    position: "absolute",
+    height: 200,
+    left: 0,
+    bottom: 0,
+    right: 0,
   },
 });

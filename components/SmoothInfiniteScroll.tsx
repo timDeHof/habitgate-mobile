@@ -83,21 +83,9 @@ const SmoothInfiniteScroll = ({
   useAnimatedReaction(
     () => scrollY.value,
     (y) => {
-      if (scrollDirection === "down") {
-        if (y >= totalContentHeight) {
-          scrollY.value = 0;
-          scrollTo(scrollRef, 0, 0, false);
-        } else {
-          scrollTo(scrollRef, 0, y, false);
-        }
-      } else {
-        if (y <= 0) {
-          scrollY.value = totalContentHeight;
-          scrollTo(scrollRef, 0, totalContentHeight, false);
-        } else {
-          scrollTo(scrollRef, 0, y, false);
-        }
-      }
+      // Let withRepeat drive scrollY to loop seamlessly
+      // Only sync the visual scroll position without modifying scrollY.value
+      scrollTo(scrollRef, 0, y, false);
     }
   );
 
