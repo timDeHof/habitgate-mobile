@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, View } from "react-native";
 import Animated, {
   scrollTo,
   useAnimatedReaction,
@@ -120,7 +120,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 20,
     marginHorizontal: 5,
-    boxShadow: "0px -2px 10px rgba(0, 0, 0, 0.1)",
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: -2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
 });
 export default SmoothInfiniteScroll;

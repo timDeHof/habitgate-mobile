@@ -54,11 +54,11 @@ export default function Index() {
             <GoogleAuthButton />
           </Animated.View>
           <Animated.View entering={FadeInDown.delay(300)}>
-            <TouchableOpacity style={styles.otherButton}>
-              <Link href={"/(app)/(public)/other-options"} asChild>
+            <Link href={"/(app)/(public)/other-options"} asChild>
+              <TouchableOpacity style={styles.otherButton}>
                 <Text style={styles.otherButtonText}>Other options</Text>
-              </Link>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </Link>
           </Animated.View>
         </View>
 
