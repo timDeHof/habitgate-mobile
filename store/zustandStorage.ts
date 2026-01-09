@@ -1,9 +1,9 @@
 import { createMMKV } from "react-native-mmkv";
 import { StateStorage } from "zustand/middleware";
 
-const storage = createMMKV();
+export const storage = createMMKV();
 
-const zustandStorage: StateStorage = {
+export const zustandStorage: StateStorage = {
   setItem: (name, value) => {
     return storage.set(name, value);
   },
@@ -16,4 +16,10 @@ const zustandStorage: StateStorage = {
   },
 };
 
-export default zustandStorage;
+export const clearAllStorage = () => {
+  storage.clearAll();
+};
+
+export const getAllKeys = () => {
+  return storage.getAllKeys();
+};
