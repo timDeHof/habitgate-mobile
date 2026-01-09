@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, Text } from "react-native";
-const Profile = () => {
+const Spend = () => {
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
@@ -14,4 +14,4 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-export default Profile;
+export default Spend;
