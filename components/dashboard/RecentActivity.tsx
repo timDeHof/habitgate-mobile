@@ -111,7 +111,7 @@ export default RecentActivity;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.background.light,
+    backgroundColor: Colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     marginHorizontal: Spacing.md,
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.gray[100],
+    borderBottomColor: Colors.border.light,
   },
   transactionLeft: {
     flexDirection: "row",

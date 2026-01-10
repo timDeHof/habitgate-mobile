@@ -23,7 +23,7 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.gray[50],
+    backgroundColor: Colors.background.primary,
     paddingTop: Spacing.lg + 24,
   },
   header: {

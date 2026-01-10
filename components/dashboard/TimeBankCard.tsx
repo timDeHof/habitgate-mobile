@@ -91,7 +91,7 @@ export default TimeBankCard;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.background.light,
+    backgroundColor: Colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     marginHorizontal: Spacing.md,
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xs,
   },
   warningBanner: {
-    backgroundColor: Colors.error[100],
+    backgroundColor: Colors.error[500],
     borderRadius: BorderRadius.md,
     padding: Spacing.sm,
     marginBottom: Spacing.sm,
@@ -134,13 +134,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   warningBannerCritical: {
-    backgroundColor: Colors.error[200],
+    backgroundColor: Colors.error[500],
     borderRadius: BorderRadius.md,
     padding: Spacing.sm,
     marginBottom: Spacing.sm,
   },
   warningTextCritical: {
-    color: Colors.error[600],
+    color: Colors.error[500],
     fontSize: Typography.fontSize.sm,
     textAlign: "center",
     fontWeight: Typography.fontWeight.semibold,
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.gray[100],
+    borderTopColor: Colors.border.light,
   },
   statItem: {
     alignItems: "center",
