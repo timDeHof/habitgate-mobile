@@ -6,6 +6,7 @@ import {
   NEAR_CAP_THRESHOLD,
   CRITICAL_BALANCE,
   DAILY_EARNING_CAP,
+  INITIAL_TIME_BANK_STATE,
 } from "@/data/timebank";
 import {
   Colors,
@@ -24,9 +25,18 @@ const TimeBankCard = (): React.ReactElement => {
     }))
   );
 
-  const remainingCapacity = getRemainingDailyCapacity();
-  const isLowBalance = balance < CRITICAL_BALANCE;
-  const isNearCap = dailyEarned > DAILY_EARNING_CAP - NEAR_CAP_THRESHOLD;
+  // Use dummy initial values for development/testing when store is empty
+  const displayBalance =
+    balance > 0 ? balance : INITIAL_TIME_BANK_STATE.balance;
+  const displayDailyEarned =
+    dailyEarned > 0 || balance > 0
+      ? dailyEarned
+      : INITIAL_TIME_BANK_STATE.dailyEarned;
+
+  const remainingCapacity =
+    displayBalance > 0 ? getRemainingDailyCapacity() : 0;
+  const isLowBalance = displayBalance < CRITICAL_BALANCE;
+  const isNearCap = displayDailyEarned > DAILY_EARNING_CAP - NEAR_CAP_THRESHOLD;
   return (
     <View style={styles.container}>
       {/* Balance Display */}
@@ -38,7 +48,7 @@ const TimeBankCard = (): React.ReactElement => {
             isLowBalance ? styles.balanceLow : styles.balanceNormal,
           ]}
         >
-          {balance}
+          {displayBalance}
         </Text>
         <Text style={styles.unit}>minutes</Text>
       </View>
@@ -65,7 +75,7 @@ const TimeBankCard = (): React.ReactElement => {
       <View style={styles.statsContainer}>
         <View style={styles.statItem}>
           <Text style={styles.statLabel}>Today</Text>
-          <Text style={styles.statValue}>+{dailyEarned}</Text>
+          <Text style={styles.statValue}>+{displayDailyEarned}</Text>
         </View>
         <View style={styles.statItem}>
           <Text style={styles.statLabel}>Capacity</Text>

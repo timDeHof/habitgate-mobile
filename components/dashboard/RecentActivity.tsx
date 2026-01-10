@@ -1,6 +1,6 @@
 // components/dashboard/RecentActivity.tsx
 import React from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { useTimeBankStore } from "@/store/timeBankStore";
 import { TRANSACTIONS } from "@/data/timebank";
 import {
@@ -108,7 +108,7 @@ const RecentActivity = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Recent Activity</Text>
 
-      <ScrollView style={styles.scrollView}>
+      <View style={styles.contentContainer}>
         {recentTransactions.length === 0 ? (
           <Text style={styles.emptyText}>
             No activity yet. Complete your first habit!
@@ -143,7 +143,7 @@ const RecentActivity = () => {
             </View>
           ))
         )}
-      </ScrollView>
+      </View>
     </View>
   );
 };
@@ -164,8 +164,8 @@ const styles = StyleSheet.create({
     color: Colors.text.primary,
     marginBottom: Spacing.md,
   },
-  scrollView: {
-    maxHeight: 256,
+  contentContainer: {
+    // Replaces scrollView, eliminates nested scrolling conflicts
   },
   emptyText: {
     color: Colors.text.secondary,
