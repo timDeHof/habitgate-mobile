@@ -10,7 +10,11 @@
 
 import { ITimeBankService } from "../types/interfaces";
 import { useTimeBankStore } from "@/store/timeBankStore";
-import { Transaction, TransactionSourceType } from "@/data/timebank";
+import {
+  Transaction,
+  TransactionSourceType,
+  DAILY_EARNING_CAP,
+} from "@/data/timebank";
 
 export class LocalTimeBankService implements ITimeBankService {
   async getBalance(): Promise<number> {
@@ -34,7 +38,14 @@ export class LocalTimeBankService implements ITimeBankService {
     return useTimeBankStore.getState().getTransactions(limit);
   }
   async getRemainingDailyCapacity(): Promise<number> {
-    return useTimeBankStore.getState().getRemainingDailyCapacity();
+    const state = useTimeBankStore.getState();
+    // Perform daily reset check as side effect
+    const today = new Date().toISOString().split("T")[0];
+    if (state.lastResetDate !== today) {
+      useTimeBankStore.setState({ dailyEarned: 0, lastResetDate: today });
+    }
+    // Calculate and return actual remaining capacity
+    return Math.max(DAILY_EARNING_CAP - state.dailyEarned, 0);
   }
 }
 export const timeBankService = new LocalTimeBankService();
