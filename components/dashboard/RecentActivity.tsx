@@ -10,48 +10,7 @@ import {
   BorderRadius,
   Shadows,
 } from "@/constants";
-import { formatDistanceToNow } from "date-fns";
-
-/**
- * Safely formats a timestamp to a relative time string.
- * Handles null, undefined, invalid dates, and various timestamp formats.
- */
-function formatTimestamp(
-  timestamp: string | number | Date | null | undefined
-): string {
-  // Handle null/undefined
-  if (timestamp == null) {
-    return "";
-  }
-
-  let date: Date;
-
-  // Handle different timestamp formats
-  try {
-    if (timestamp instanceof Date) {
-      date = timestamp;
-    } else if (typeof timestamp === "number") {
-      // Treat as milliseconds (Unix timestamp)
-      date = new Date(timestamp);
-    } else if (typeof timestamp === "string") {
-      // Try parsing as ISO string or standard date format
-      date = new Date(timestamp);
-    } else {
-      return "";
-    }
-
-    // Validate the date
-    if (isNaN(date.getTime())) {
-      return "";
-    }
-
-    // Use formatDistanceToNow with error handling
-    return formatDistanceToNow(date, { addSuffix: true });
-  } catch {
-    // Return empty string for any parsing/formatting errors
-    return "";
-  }
-}
+import { formatTimestamp } from "@/utils/formatting/time";
 
 const RecentActivity = () => {
   const transactions = useTimeBankStore((state) => state.transactions);
@@ -137,8 +96,9 @@ const RecentActivity = () => {
                     : styles.amountSpend,
                 ]}
               >
-                {tx.amount >= 0 ? "+" : ""}
-                {tx.amount}
+                {`${
+                  tx.type === "earn" || tx.type === "bonus" ? "+" : "-"
+                }${Math.abs(tx.amount)}`}
               </Text>
             </View>
           ))
