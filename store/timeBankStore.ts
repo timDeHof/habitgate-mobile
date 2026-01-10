@@ -34,8 +34,8 @@ export const useTimeBankStore = create<TimeBankStore>()(
       // ACTIONS
       addBalance: (amount, source, metadata) => {
         let state = get();
-        // Check if daily reset needed
-        const today = new Date().toISOString().split("T")[0];
+        // Check if daily reset needed (use local date)
+        const today = new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD in local timezone
         if (state.lastResetDate !== today) {
           set({ dailyEarned: 0, lastResetDate: today });
           // Get fresh state after reset for accurate calculations
@@ -87,7 +87,7 @@ export const useTimeBankStore = create<TimeBankStore>()(
         return true;
       },
       resetDailyEarned: () => {
-        const today = new Date().toISOString().split("T")[0];
+        const today = new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD in local timezone
         set({ dailyEarned: 0, lastResetDate: today });
       },
       getTransactions: (limit = 50) => {
@@ -95,12 +95,12 @@ export const useTimeBankStore = create<TimeBankStore>()(
       },
       getRemainingDailyCapacity: () => {
         const state = get();
-        const today = new Date().toISOString().split("T")[0];
+        const today = new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD in local timezone
         if (state.lastResetDate !== today) {
           // Perform the same reset side-effect as addBalance
           set({ dailyEarned: 0, lastResetDate: today });
         }
-        return DAILY_EARNING_CAP;
+        return Math.max(DAILY_EARNING_CAP - state.dailyEarned, 0);
       },
     }),
     {

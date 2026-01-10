@@ -39,8 +39,8 @@ export class LocalTimeBankService implements ITimeBankService {
   }
   async getRemainingDailyCapacity(): Promise<number> {
     const state = useTimeBankStore.getState();
-    // Perform daily reset check as side effect
-    const today = new Date().toISOString().split("T")[0];
+    // Perform daily reset check as side effect (use local date)
+    const today = new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD in local timezone
     if (state.lastResetDate !== today) {
       useTimeBankStore.setState({ dailyEarned: 0, lastResetDate: today });
     }

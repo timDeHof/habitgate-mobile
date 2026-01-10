@@ -262,6 +262,6 @@ export const INITIAL_TIME_BANK_STATE: TimeBankState = {
   lifetimeEarned: 2450,
   lifetimeSpent: 680,
   dailyEarned: 50,
-  lastResetDate: new Date().toISOString().split("T")[0],
+  lastResetDate: new Date().toLocaleDateString("en-CA"), // YYYY-MM-DD in local timezone
   transactions: [],
 };
