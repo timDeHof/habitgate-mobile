@@ -94,6 +94,21 @@ export interface TimeBankState {
 export const DAILY_RESET_HOUR = 2;
 
 /**
+ * Maximum daily earning capacity (in minutes)
+ */
+export const DAILY_EARNING_CAP = 180;
+
+/**
+ * Threshold to show "near daily cap" warning (dailyEarned > DAILY_EARNING_CAP - NEAR_CAP_THRESHOLD)
+ */
+export const NEAR_CAP_THRESHOLD = 30; // Show warning when 30 minutes remaining
+
+/**
+ * Critical balance threshold for low balance warning
+ */
+export const CRITICAL_BALANCE = 15;
+
+/**
  * Maximum balance allowed
  */
 export const MAX_BALANCE = 480; // 8 hours in minutes
@@ -119,7 +134,7 @@ export const TRANSACTIONS: Transaction[] = [
       habitName: "Morning Run",
       duration: 30,
     },
-    timestamp: 1704734400000, // 2024-01-08 22:00 UTC
+    timestamp: 1767804400000, // 2026-01-08 22:00 UTC
   },
   {
     id: "txn_002",
@@ -132,7 +147,7 @@ export const TRANSACTIONS: Transaction[] = [
       habitName: "Read 20 Pages",
       duration: 20,
     },
-    timestamp: 1704676800000, // 2024-01-08 08:00 UTC
+    timestamp: 1767676800000, // 2026-01-08 08:00 UTC
   },
   {
     id: "txn_003",
@@ -145,7 +160,7 @@ export const TRANSACTIONS: Transaction[] = [
       appName: "Instagram",
       duration: 30,
     },
-    timestamp: 1704669600000, // 2024-01-08 06:00 UTC
+    timestamp: 1767669600000, // 2024-01-08 06:00 UTC
   },
   {
     id: "txn_004",
@@ -156,7 +171,7 @@ export const TRANSACTIONS: Transaction[] = [
     metadata: {
       bonusMultiplier: 1.2,
     },
-    timestamp: 1704561600000, // 2024-01-07 00:00 UTC
+    timestamp: 1767561600000, // 2024-01-07 00:00 UTC
   },
   {
     id: "txn_005",
@@ -169,7 +184,7 @@ export const TRANSACTIONS: Transaction[] = [
       habitName: "Meditation",
       duration: 15,
     },
-    timestamp: 1704561600000, // 2024-01-07 00:00 UTC
+    timestamp: 1767561600000, // 2024-01-07 00:00 UTC
   },
   {
     id: "txn_006",
@@ -182,7 +197,7 @@ export const TRANSACTIONS: Transaction[] = [
       habitName: "Journal",
       duration: 10,
     },
-    timestamp: 1704561600000, // 2024-01-07 00:00 UTC
+    timestamp: 1767561600000, // 2024-01-07 00:00 UTC
   },
   {
     id: "txn_007",
@@ -195,7 +210,7 @@ export const TRANSACTIONS: Transaction[] = [
       appName: "YouTube",
       duration: 45,
     },
-    timestamp: 1704475200000, // 2024-01-06 12:00 UTC
+    timestamp: 1764475200000, // 2024-01-06 12:00 UTC
   },
   {
     id: "txn_008",
@@ -206,7 +221,7 @@ export const TRANSACTIONS: Transaction[] = [
     metadata: {
       appName: "Instagram",
     },
-    timestamp: 1704388800000, // 2024-01-05 00:00 UTC
+    timestamp: 1764388800000, // 2024-01-05 00:00 UTC
   },
   {
     id: "txn_009",
@@ -219,7 +234,7 @@ export const TRANSACTIONS: Transaction[] = [
       habitName: "Sleep 8 Hours",
       duration: 480,
     },
-    timestamp: 1704302400000, // 2024-01-04 00:00 UTC
+    timestamp: 1764302400000, // 2024-01-04 00:00 UTC
   },
   {
     id: "txn_010",
@@ -231,7 +246,7 @@ export const TRANSACTIONS: Transaction[] = [
       habitName: "Perfect Week",
       bonusMultiplier: 1.5,
     },
-    timestamp: 1704216000000, // 2024-01-03 00:00 UTC
+    timestamp: 1764216000000, // 2024-01-03 00:00 UTC
   },
 ];
 
@@ -247,6 +262,6 @@ export const INITIAL_TIME_BANK_STATE: TimeBankState = {
   lifetimeEarned: 2450,
   lifetimeSpent: 680,
   dailyEarned: 50,
-  lastResetDate: new Date().toISOString().split("T")[0],
-  transactions: TRANSACTIONS,
+  lastResetDate: new Date().toLocaleDateString("en-CA"), // YYYY-MM-DD in local timezone
+  transactions: [],
 };
