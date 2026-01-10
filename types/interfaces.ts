@@ -1,14 +1,18 @@
 import { Habit, HabitCompletion } from "@/data/habits";
-import { Transaction } from "@/data/timebank";
+import { Transaction, TransactionSourceType } from "@/data/timebank";
 import { LockedApp, UnlockSession } from "@/data/apps";
 
 export interface ITimeBankService {
   getBalance(): Promise<number>;
-  addBalance(amount: number, source: string, metadata?: any): Promise<boolean>;
+  addBalance(
+    amount: number,
+    source: TransactionSourceType,
+    metadata?: Transaction["metadata"]
+  ): Promise<boolean>;
   deductBalance(
     amount: number,
-    source: string,
-    metadata?: any
+    source: TransactionSourceType,
+    metadata?: Transaction["metadata"]
   ): Promise<boolean>;
   getTransactions(limit?: number): Promise<Transaction[]>;
   getRemainingDailyCapacity(): Promise<number>;

@@ -94,6 +94,21 @@ export interface TimeBankState {
 export const DAILY_RESET_HOUR = 2;
 
 /**
+ * Maximum daily earning capacity (in minutes)
+ */
+export const DAILY_EARNING_CAP = 180;
+
+/**
+ * Threshold to show "near daily cap" warning (dailyEarned > DAILY_EARNING_CAP - NEAR_CAP_THRESHOLD)
+ */
+export const NEAR_CAP_THRESHOLD = 30; // Show warning when 30 minutes remaining
+
+/**
+ * Critical balance threshold for low balance warning
+ */
+export const CRITICAL_BALANCE = 15;
+
+/**
  * Maximum balance allowed
  */
 export const MAX_BALANCE = 480; // 8 hours in minutes
@@ -248,5 +263,5 @@ export const INITIAL_TIME_BANK_STATE: TimeBankState = {
   lifetimeSpent: 680,
   dailyEarned: 50,
   lastResetDate: new Date().toISOString().split("T")[0],
-  transactions: TRANSACTIONS,
+  transactions: [],
 };
