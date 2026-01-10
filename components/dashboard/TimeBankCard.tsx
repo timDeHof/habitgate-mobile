@@ -33,8 +33,8 @@ const TimeBankCard = (): React.ReactElement => {
       ? dailyEarned
       : INITIAL_TIME_BANK_STATE.dailyEarned;
 
-  const remainingCapacity =
-    displayBalance > 0 ? getRemainingDailyCapacity() : 0;
+  // Compute remaining daily capacity inline for consistency
+  const remainingCapacity = Math.max(DAILY_EARNING_CAP - displayDailyEarned, 0);
   const isLowBalance = displayBalance < CRITICAL_BALANCE;
   const isNearCap = displayDailyEarned > DAILY_EARNING_CAP - NEAR_CAP_THRESHOLD;
   return (
