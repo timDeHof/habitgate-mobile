@@ -1,4 +1,3 @@
-// app/(tabs)/index.tsx
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import TimeBankCard from "@/components/dashboard/TimeBankCard";
