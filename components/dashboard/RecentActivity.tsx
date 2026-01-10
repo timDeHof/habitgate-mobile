@@ -137,7 +137,7 @@ const RecentActivity = () => {
                     : styles.amountSpend,
                 ]}
               >
-                {tx.type === "earn" || tx.type === "bonus" ? "+" : "-"}
+                {tx.amount >= 0 ? "+" : ""}
                 {tx.amount}
               </Text>
             </View>
