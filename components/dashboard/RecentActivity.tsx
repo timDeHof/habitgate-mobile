@@ -2,6 +2,7 @@
 import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { useTimeBankStore } from "@/store/timeBankStore";
+import { TRANSACTIONS } from "@/data/timebank";
 import {
   Colors,
   Typography,
@@ -54,8 +55,13 @@ function formatTimestamp(
 
 const RecentActivity = () => {
   const transactions = useTimeBankStore((state) => state.transactions);
+
+  // Use dummy data for development/testing when store is empty
+  const displayTransactions =
+    transactions.length > 0 ? transactions : TRANSACTIONS;
+
   // Sort by timestamp (newest first) and take the 5 most recent
-  const recentTransactions = [...transactions]
+  const recentTransactions = [...displayTransactions]
     .sort((a, b) => b.timestamp - a.timestamp)
     .slice(0, 5);
 
