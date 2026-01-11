@@ -29,7 +29,7 @@ const GradientText = (props: React.ComponentProps<typeof Text>) => {
     >
       {/* The LinearGradient provides the colors that show through the mask */}
       <LinearGradient
-        colors={["#3B82F6", "#10B981"]}
+        colors={["#3B82F6", "#14B8A6", "#10B981"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         style={styles.balanceGradientWrapper}
@@ -94,7 +94,7 @@ const TimeBankBalanceModal = () => {
         </View>
         <View style={styles.progressBarContainer}>
           <LinearGradient
-            colors={["#10B981", "#3B82F6"]}
+            colors={["#10B981", "#14B8A6", "#3B82F6"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={[
