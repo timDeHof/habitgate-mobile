@@ -1,6 +1,6 @@
 import AppleAuthButton from "@/components/auth/AppleAuthButton";
 import GoogleAuthButton from "@/components/auth/GoogleAuthButton";
-import SmoothInfiniteScroll from "@/components/SmoothInfiniteScroll";
+import SmoothInfiniteScroll from "@/components/ui/SmoothInfiniteScroll";
 import { Typography } from "@/constants";
 import { LinearGradient } from "expo-linear-gradient";
 import {

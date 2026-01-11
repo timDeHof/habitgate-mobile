@@ -1,9 +1,7 @@
 import { zustandStorage } from "@/store/zustandStorage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-
-// Define User type - using unknown for dynamic/unpredictable user structures
-type User = unknown;
+import type { User } from "@/data/user";
 
 interface UserStore {
   isGuest: boolean;

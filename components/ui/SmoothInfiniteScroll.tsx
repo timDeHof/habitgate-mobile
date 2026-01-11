@@ -35,7 +35,7 @@ const iconDataSets = {
 
 const ITEM_HEIGHT = 160;
 const SCROLL_SPEED = 20; // pixels per second
-const GAP = 10; // gap between items from styles
+// GAP will be read dynamically from styles to maintain single source of truth
 
 interface SmoothInfiniteScrollProps {
   scrollDirection?: "up" | "down";
@@ -53,9 +53,12 @@ const SmoothInfiniteScroll = ({
   const items = [...iconData, ...iconData];
   const totalContentHeight = iconData.length * ITEM_HEIGHT;
 
+  // Read gap value dynamically from styles to maintain single source of truth
+  const gap = styles.container.gap || 10;
+
   // Calculate total wrap height including gaps between items
   // Each item has a gap after it (except conceptually the last, but we're wrapping)
-  const totalWrapHeight = totalContentHeight + iconData.length * GAP;
+  const totalWrapHeight = totalContentHeight + iconData.length * gap;
 
   useEffect(() => {
     // Calculate duration based on SCROLL_SPEED and total distance

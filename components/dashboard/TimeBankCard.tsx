@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
+import { Link } from "expo-router";
 import { useTimeBankStore } from "@/store/timeBankStore";
 import { useShallow } from "zustand/react/shallow";
 import {
@@ -15,8 +16,13 @@ import {
   BorderRadius,
   Shadows,
 } from "@/constants";
+import { LinearGradient } from "expo-linear-gradient";
 
-const TimeBankCard = (): React.ReactElement => {
+interface TimeBankCardProps {
+  onPress?: () => void;
+}
+
+const TimeBankCard = ({ onPress }: TimeBankCardProps): React.ReactElement => {
   const { balance, dailyEarned } = useTimeBankStore(
     useShallow((state) => ({
       balance: state.balance,
@@ -39,51 +45,45 @@ const TimeBankCard = (): React.ReactElement => {
   const isNearCap =
     remainingCapacity <= NEAR_CAP_THRESHOLD && remainingCapacity > 0;
   return (
-    <View style={styles.container}>
-      {/* Balance Display */}
-      <View style={styles.balanceContainer}>
-        <Text style={styles.label}>Time Bank Balance</Text>
-        <Text
-          style={[
-            styles.balance,
-            isLowBalance ? styles.balanceLow : styles.balanceNormal,
-          ]}
+    <Link href={"/(app)/(auth)/(modal)/timeBankBalance"} asChild>
+      <TouchableOpacity
+        onPress={onPress}
+        activeOpacity={0.8}
+        style={styles.container}
+      >
+        <LinearGradient
+          colors={["#3B82F6", "#14B8A6", "#10B981"]}
+          style={styles.timeBankGradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
         >
-          {displayBalance}
-        </Text>
-        <Text style={styles.unit}>minutes</Text>
-      </View>
+          {/* Balance Display */}
+          <View style={styles.balanceContainer}>
+            <Text style={styles.label}>Time Bank Balance</Text>
+            <Text style={styles.timeBankBalance}>{displayBalance}</Text>
+            <Text style={styles.balance}>minutes</Text>
+          </View>
 
-      {/* Warning Banners */}
-      {isNearCap && (
-        <View style={styles.warningBannerCritical}>
-          <Text style={styles.warningTextCritical}>
-            ⚠️ Only {remainingCapacity} minutes left until daily cap! Complete
-            habits now!
-          </Text>
-        </View>
-      )}
+          {/* Warning Banners */}
+          {isNearCap && (
+            <View style={styles.warningBannerCritical}>
+              <Text style={styles.warningTextCritical}>
+                ⚠️ Only {remainingCapacity} minutes left until daily cap!
+                Complete habits now!
+              </Text>
+            </View>
+          )}
 
-      {isLowBalance && !isNearCap && (
-        <View style={styles.warningBanner}>
-          <Text style={styles.warningText}>
-            ⚠️ Low balance! Complete habits to earn more time.
-          </Text>
-        </View>
-      )}
-
-      {/* Quick Stats */}
-      <View style={styles.statsContainer}>
-        <View style={styles.statItem}>
-          <Text style={styles.statLabel}>Today</Text>
-          <Text style={styles.statValue}>+{displayDailyEarned}</Text>
-        </View>
-        <View style={styles.statItem}>
-          <Text style={styles.statLabel}>Capacity</Text>
-          <Text style={styles.statValue}>{remainingCapacity}</Text>
-        </View>
-      </View>
-    </View>
+          {isLowBalance && !isNearCap && (
+            <View style={styles.warningBanner}>
+              <Text style={styles.warningText}>
+                ⚠️ Low balance! Complete habits to earn more time.
+              </Text>
+            </View>
+          )}
+        </LinearGradient>
+      </TouchableOpacity>
+    </Link>
   );
 };
 
@@ -91,36 +91,35 @@ export default TimeBankCard;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.background.primary,
     borderRadius: BorderRadius.xl,
-    padding: Spacing.lg,
+    overflow: "hidden",
     marginHorizontal: Spacing.md,
     marginTop: Spacing.md,
     ...Shadows.lg,
+  },
+  timeBankGradient: {
+    padding: Spacing.lg,
   },
   balanceContainer: {
     alignItems: "center",
     marginBottom: Spacing.md,
   },
   label: {
-    fontSize: Typography.fontSize.sm,
-    color: Colors.text.secondary,
+    fontFamily: Typography.fontFamily.brandMedium,
+    fontSize: Typography.fontSize.base,
+    color: "rgba(255,255,255, 0.9)",
     marginBottom: Spacing.xs,
   },
-  balance: {
+  timeBankBalance: {
+    fontFamily: Typography.fontFamily.brandBold,
     fontSize: Typography.fontSize["5xl"],
-    fontWeight: Typography.fontWeight.bold,
+    color: "rgba(255, 255, 255, 0.9)",
+    marginBottom: Spacing.md,
   },
-  balanceNormal: {
-    color: Colors.success[500],
-  },
-  balanceLow: {
-    color: Colors.warning[500],
-  },
-  unit: {
-    fontSize: Typography.fontSize.xs,
-    color: Colors.text.secondary,
-    marginTop: Spacing.xs,
+  balance: {
+    fontFamily: Typography.fontFamily.brandBold,
+    fontSize: Typography.fontSize["5xl"],
+    color: "rgba(255, 255, 255, 0.9)",
   },
   warningBanner: {
     backgroundColor: Colors.error[500],
@@ -144,24 +143,5 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize.sm,
     textAlign: "center",
     fontWeight: Typography.fontWeight.semibold,
-  },
-  statsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingTop: Spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
-  },
-  statItem: {
-    alignItems: "center",
-  },
-  statLabel: {
-    fontSize: Typography.fontSize.xs,
-    color: Colors.text.secondary,
-  },
-  statValue: {
-    fontSize: Typography.fontSize.lg,
-    fontWeight: Typography.fontWeight.semibold,
-    color: Colors.text.primary,
   },
 });

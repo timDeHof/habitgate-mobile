@@ -5,7 +5,7 @@ const Layout = () => {
       <Stack.Screen
         name="index"
         options={{
-          title: "Analysis",
+          title: "Earn",
           headerLargeTitle: true,
           headerTransparent: true,
         }}

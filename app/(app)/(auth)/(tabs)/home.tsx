@@ -1,1 +1,1 @@
-export { default } from "@/components/screens/DashboardPage";
+export { default } from "@/components/screens/DashboardScreen";

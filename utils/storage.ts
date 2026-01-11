@@ -6,6 +6,7 @@ export const StorageKeys = {
   APPS: "apps-storage",
   GAMIFICATION: "gamification-storage",
   USER: "user-storage",
+  AUTH: "auth-storage",
   ONBOARDING: "onboarding-storage",
 } as const;
 

@@ -78,8 +78,14 @@ export interface TimeBankState {
   lifetimeSpent: number;
   /** Time earned today (resets daily) */
   dailyEarned: number;
+  /** Time spent today (resets daily) */
+  dailySpent: number;
   /** ISO date string of last daily reset */
   lastResetDate: string;
+  /** Current consecutive day streak */
+  currentStreak: number;
+  /** Longest streak ever achieved */
+  longestStreak: number;
   /** Recent transactions (limited to recent history) */
   transactions: Transaction[];
 }
@@ -97,6 +103,11 @@ export const DAILY_RESET_HOUR = 2;
  * Maximum daily earning capacity (in minutes)
  */
 export const DAILY_EARNING_CAP = 180;
+
+/**
+ * Maximum daily spending capacity (in minutes)
+ */
+export const DAILY_SPENDING_CAP = 240;
 
 /**
  * Threshold to show "near daily cap" warning (dailyEarned > DAILY_EARNING_CAP - NEAR_CAP_THRESHOLD)
@@ -262,6 +273,9 @@ export const INITIAL_TIME_BANK_STATE: TimeBankState = {
   lifetimeEarned: 2450,
   lifetimeSpent: 680,
   dailyEarned: 50,
+  dailySpent: 0,
   lastResetDate: new Date().toLocaleDateString("en-CA"), // YYYY-MM-DD in local timezone
+  currentStreak: 5,
+  longestStreak: 12,
   transactions: [],
 };

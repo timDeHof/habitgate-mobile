@@ -2,15 +2,90 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useTimeBankStore } from "@/store/timeBankStore";
-import { TRANSACTIONS } from "@/data/timebank";
-import {
-  Colors,
-  Typography,
-  Spacing,
-  BorderRadius,
-  Shadows,
-} from "@/constants";
+import { TRANSACTIONS, Transaction } from "@/data/timebank";
+import { Colors, Typography, Spacing } from "@/constants";
 import { formatTimestamp } from "@/utils/formatting/time";
+
+const getTransactionIcon = (type: string) => {
+  switch (type) {
+    case "earn":
+      return "💚"; // Green heart for earning time
+    case "bonus":
+      return "⭐"; // Star for bonus time
+    case "spend":
+      return "⏰"; // Clock for spending time
+    case "penalty":
+      return "⚠️"; // Warning for penalty
+    default:
+      return "📌"; // Default pin for unknown types
+  }
+};
+
+const getTransactionDescription = (tx: Transaction) => {
+  switch (tx.type) {
+    case "earn":
+      if (tx.sourceType === "habit" && tx.metadata?.habitName) {
+        return `Completed: ${tx.metadata.habitName}`;
+      }
+      return "Time earned";
+    case "bonus":
+      if (tx.metadata?.habitName) {
+        return `Bonus: ${tx.metadata.habitName}`;
+      }
+      return "Bonus earned";
+    case "spend":
+      if (tx.sourceType === "app_unlock" && tx.metadata?.appName) {
+        return `Unlocked: ${tx.metadata.appName}`;
+      }
+      return "Time spent";
+    case "penalty":
+      return "Penalty applied";
+    default:
+      return "Transaction";
+  }
+};
+
+interface ActivityItemProps {
+  transaction: Transaction;
+}
+
+const ActivityItem = ({ transaction }: ActivityItemProps) => {
+  const isEarn = transaction.type === "earn" || transaction.type === "bonus";
+  return (
+    <View style={styles.transactionItem}>
+      <View style={styles.transactionLeft}>
+        <View
+          style={[
+            styles.transactionIcon,
+            {
+              backgroundColor: isEarn ? Colors.success[100] : Colors.error[100],
+            },
+          ]}
+        >
+          <Text style={styles.transactionEmoji}>
+            {getTransactionIcon(transaction.type)}
+          </Text>
+        </View>
+        <View style={styles.transactionInfo}>
+          <Text style={styles.transactionDescription}>
+            {getTransactionDescription(transaction)}
+          </Text>
+          <Text style={styles.transactionTime}>
+            {formatTimestamp(transaction.timestamp)}
+          </Text>
+        </View>
+      </View>
+      <Text
+        style={[
+          styles.transactionAmount,
+          isEarn ? styles.amountEarn : styles.amountSpend,
+        ]}
+      >
+        {`${isEarn ? "+" : "-"}${Math.abs(transaction.amount)}`}
+      </Text>
+    </View>
+  );
+};
 
 const RecentActivity = () => {
   const transactions = useTimeBankStore((state) => state.transactions);
@@ -24,108 +99,36 @@ const RecentActivity = () => {
     .sort((a, b) => b.timestamp - a.timestamp)
     .slice(0, 5);
 
-  const getTransactionIcon = (type: string) => {
-    switch (type) {
-      case "earn":
-        return "💚"; // Green heart for earning time
-      case "bonus":
-        return "⭐"; // Star for bonus time
-      case "spend":
-        return "⏰"; // Clock for spending time
-      case "penalty":
-        return "⚠️"; // Warning for penalty
-      default:
-        return "📌"; // Default pin for unknown types
-    }
-  };
-
-  const getTransactionDescription = (tx: (typeof recentTransactions)[0]) => {
-    switch (tx.type) {
-      case "earn":
-        if (tx.sourceType === "habit" && tx.metadata?.habitName) {
-          return `Completed: ${tx.metadata.habitName}`;
-        }
-        return "Time earned";
-      case "bonus":
-        if (tx.metadata?.habitName) {
-          return `Bonus: ${tx.metadata.habitName}`;
-        }
-        return "Bonus earned";
-      case "spend":
-        if (tx.sourceType === "app_unlock" && tx.metadata?.appName) {
-          return `Unlocked: ${tx.metadata.appName}`;
-        }
-        return "Time spent";
-      case "penalty":
-        return "Penalty applied";
-      default:
-        return "Transaction";
-    }
-  };
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Recent Activity</Text>
-
-      <View style={styles.contentContainer}>
-        {recentTransactions.length === 0 ? (
-          <Text style={styles.emptyText}>
-            No activity yet. Complete your first habit!
-          </Text>
-        ) : (
-          recentTransactions.map((tx) => (
-            <View key={tx.id} style={styles.transactionItem}>
-              <View style={styles.transactionLeft}>
-                <Text style={styles.transactionIcon}>
-                  {getTransactionIcon(tx.type)}
-                </Text>
-                <View style={styles.transactionInfo}>
-                  <Text style={styles.transactionDescription}>
-                    {getTransactionDescription(tx)}
-                  </Text>
-                  <Text style={styles.transactionTime}>
-                    {formatTimestamp(tx.timestamp)}
-                  </Text>
-                </View>
-              </View>
-              <Text
-                style={[
-                  styles.transactionAmount,
-                  tx.type === "earn" || tx.type === "bonus"
-                    ? styles.amountEarn
-                    : styles.amountSpend,
-                ]}
-              >
-                {`${
-                  tx.type === "earn" || tx.type === "bonus" ? "+" : "-"
-                }${Math.abs(tx.amount)}`}
-              </Text>
-            </View>
-          ))
-        )}
-      </View>
+      {recentTransactions.length > 0 ? (
+        <View style={styles.contentContainer}>
+          {recentTransactions.map((tx) => (
+            <ActivityItem key={tx.id} transaction={tx} />
+          ))}
+        </View>
+      ) : (
+        <Text style={styles.emptyText}>No recent activity</Text>
+      )}
     </View>
   );
 };
+
 export default RecentActivity;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.background.primary,
-    borderRadius: BorderRadius.xl,
-    padding: Spacing.lg,
-    marginHorizontal: Spacing.md,
-    marginTop: Spacing.md,
-    ...Shadows.lg,
+    marginBottom: Spacing.xl,
   },
   title: {
-    fontSize: Typography.fontSize.lg,
-    fontWeight: Typography.fontWeight.bold,
+    fontFamily: Typography.fontFamily.brandBold,
+    fontSize: Typography.fontSize.xl,
     color: Colors.text.primary,
     marginBottom: Spacing.md,
   },
   contentContainer: {
-    // Replaces scrollView, eliminates nested scrolling conflicts
+    gap: Spacing.sm,
   },
   emptyText: {
     color: Colors.text.secondary,
@@ -146,20 +149,29 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   transactionIcon: {
-    fontSize: 24,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
     marginRight: Spacing.sm,
+  },
+  transactionEmoji: {
+    fontSize: 20,
   },
   transactionInfo: {
     flex: 1,
   },
   transactionDescription: {
-    fontSize: Typography.fontSize.sm,
-    fontWeight: Typography.fontWeight.semibold,
+    fontSize: Typography.fontSize.base,
+    fontFamily: Typography.fontFamily.brandMedium,
     color: Colors.text.primary,
+    marginBottom: Spacing.xs,
   },
   transactionTime: {
-    fontSize: Typography.fontSize.xs,
-    color: Colors.text.secondary,
+    fontFamily: Typography.fontFamily.brandMedium,
+    fontSize: Typography.fontSize.sm,
+    color: Colors.text.tertiary,
   },
   transactionAmount: {
     fontSize: Typography.fontSize.lg,
@@ -169,6 +181,6 @@ const styles = StyleSheet.create({
     color: Colors.success[500],
   },
   amountSpend: {
-    color: Colors.warning[500],
+    color: Colors.error[500],
   },
 });
