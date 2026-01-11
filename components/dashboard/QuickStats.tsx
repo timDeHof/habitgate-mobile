@@ -97,15 +97,16 @@ const styles = StyleSheet.create({
     fontSize: Typography.fontSize["2xl"],
   },
   statLabel: {
-    fontFamily: Typography.fontFamily.brand,
-    fontSize: Typography.fontSize.xs,
+    fontFamily: Typography.fontFamily.brandSemibold,
+    fontWeight: Typography.fontWeight.semibold,
+    fontSize: Typography.fontSize.sm,
     color: Colors.text.secondary,
     textAlign: "center",
     marginBottom: Spacing.xs,
   },
   statValue: {
     fontSize: Typography.fontSize.lg,
-    fontWeight: Typography.fontWeight.semibold,
+    fontWeight: Typography.fontWeight.bold,
     color: Colors.text.primary,
   },
 });

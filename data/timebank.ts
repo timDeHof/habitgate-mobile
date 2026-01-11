@@ -117,7 +117,7 @@ export const NEAR_CAP_THRESHOLD = 30; // Show warning when 30 minutes remaining
 /**
  * Critical balance threshold for low balance warning
  */
-export const CRITICAL_BALANCE = 15;
+export const CRITICAL_BALANCE = 55;
 
 /**
  * Maximum balance allowed
@@ -273,7 +273,7 @@ export const INITIAL_TIME_BANK_STATE: TimeBankState = {
   lifetimeEarned: 2450,
   lifetimeSpent: 680,
   dailyEarned: 50,
-  dailySpent: 0,
+  dailySpent: 15,
   lastResetDate: new Date().toLocaleDateString("en-CA"), // YYYY-MM-DD in local timezone
   currentStreak: 5,
   longestStreak: 12,
