@@ -7,6 +7,7 @@ import Header from "@/components/ui/header";
 import { Colors, Spacing } from "@/constants";
 import Animated from "react-native-reanimated";
 import QuickStats from "../dashboard/QuickStats";
+import TodayHabits from "../dashboard/TodayHabitsList";
 
 export default function DashboardScreen() {
   const [refreshing, setRefreshing] = useState(false);
@@ -78,6 +79,7 @@ export default function DashboardScreen() {
       >
         <TimeBankCard />
         <QuickStats />
+        <TodayHabits />
         <RecentActivity />
       </Animated.ScrollView>
     </SafeAreaView>

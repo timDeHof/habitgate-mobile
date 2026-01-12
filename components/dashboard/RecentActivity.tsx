@@ -5,20 +5,44 @@ import { useTimeBankStore } from "@/store/timeBankStore";
 import { TRANSACTIONS, Transaction } from "@/data/timebank";
 import { Colors, Typography, Spacing } from "@/constants";
 import { formatTimestamp } from "@/utils/formatting/time";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
-const getTransactionIcon = (type: string) => {
+interface IconConfig {
+  name: string;
+  library: "MaterialCommunityIcons" | "Ionicons";
+}
+
+const getTransactionIcon = (type: string): IconConfig => {
   switch (type) {
     case "earn":
-      return "💚"; // Green heart for earning time
+      return { name: "heart", library: "MaterialCommunityIcons" };
     case "bonus":
-      return "⭐"; // Star for bonus time
+      return { name: "star", library: "MaterialCommunityIcons" };
     case "spend":
-      return "⏰"; // Clock for spending time
+      return { name: "clock-outline", library: "MaterialCommunityIcons" };
     case "penalty":
-      return "⚠️"; // Warning for penalty
+      return { name: "alert-circle", library: "Ionicons" };
     default:
-      return "📌"; // Default pin for unknown types
+      return { name: "bookmark", library: "MaterialCommunityIcons" };
   }
+};
+
+const renderTransactionIcon = (type: string) => {
+  const icon = getTransactionIcon(type);
+  const isEarn = type === "earn" || type === "bonus";
+  const iconColor = isEarn ? Colors.success[500] : Colors.error[500];
+
+  if (icon.library === "Ionicons") {
+    return <Ionicons name={icon.name as any} size={20} color={iconColor} />;
+  }
+  return (
+    <MaterialCommunityIcons
+      name={icon.name as any}
+      size={20}
+      color={iconColor}
+    />
+  );
 };
 
 const getTransactionDescription = (tx: Transaction) => {
@@ -61,10 +85,9 @@ const ActivityItem = ({ transaction }: ActivityItemProps) => {
               backgroundColor: isEarn ? Colors.success[100] : Colors.error[100],
             },
           ]}
+          accessibilityLabel={`${transaction.type} transaction`}
         >
-          <Text style={styles.transactionEmoji}>
-            {getTransactionIcon(transaction.type)}
-          </Text>
+          {renderTransactionIcon(transaction.type)}
         </View>
         <View style={styles.transactionInfo}>
           <Text style={styles.transactionDescription}>
@@ -155,9 +178,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginRight: Spacing.sm,
-  },
-  transactionEmoji: {
-    fontSize: 20,
   },
   transactionInfo: {
     flex: 1,

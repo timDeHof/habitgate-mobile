@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { v4 as uuidv4 } from "uuid";
 import { zustandStorage } from "./zustandStorage";
 import {
   Transaction,
@@ -51,7 +50,7 @@ export const useTimeBankStore = create<TimeBankStore>()(
         const newDailyEarned = state.dailyEarned + cappedAmount;
         const newBalance = state.balance + cappedAmount;
         const transaction: Transaction = {
-          id: uuidv4(),
+          id: Date.now().toString(),
           type: "earn",
           amount: cappedAmount,
           balanceAfter: newBalance,
@@ -78,7 +77,7 @@ export const useTimeBankStore = create<TimeBankStore>()(
         const cappedAmount = Math.min(amount, remainingSpendingCapacity);
         const newBalance = state.balance - cappedAmount;
         const transaction: Transaction = {
-          id: uuidv4(),
+          id: Date.now().toString(),
           type: "spend",
           amount: cappedAmount,
           balanceAfter: newBalance,

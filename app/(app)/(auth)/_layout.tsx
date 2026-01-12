@@ -39,6 +39,79 @@ const Layout = () => {
           ),
         }}
       />
+      <Stack.Screen
+        name="(modal)/habit/complete"
+        options={{
+          presentation: "formSheet",
+          sheetAllowedDetents: [0.9],
+          title: "",
+          headerShown: true,
+          headerShadowVisible: false,
+          sheetCornerRadius: 16,
+          sheetGrabberVisible: true,
+          contentStyle: {
+            backgroundColor: "#fff",
+          },
+          headerRight: () => (
+            <TouchableOpacity
+              style={{
+                padding: 4,
+                borderRadius: 20,
+                backgroundColor: Colors.background.secondary,
+              }}
+              onPress={() => {
+                router.dismiss();
+              }}
+            >
+              <Ionicons name="close-sharp" size={28} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="(modal)/habit/create"
+        options={{
+          presentation: "formSheet",
+          sheetAllowedDetents: [0.9],
+          title: "",
+          headerShown: true,
+          headerShadowVisible: false,
+          sheetCornerRadius: 16,
+          sheetGrabberVisible: true,
+          contentStyle: {
+            backgroundColor: "#fff",
+          },
+          headerRight: () => (
+            <TouchableOpacity
+              style={{
+                padding: 4,
+                borderRadius: 20,
+                backgroundColor: Colors.background.secondary,
+              }}
+              onPress={() => {
+                router.dismiss();
+              }}
+            >
+              <Ionicons name="close-sharp" size={28} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="(modal)/habit/detail"
+        options={{
+          presentation: "modal",
+          sheetAllowedDetents: [0.9],
+          title: "",
+          headerShown: false,
+          headerShadowVisible: false,
+          sheetCornerRadius: 16,
+          sheetGrabberVisible: true,
+          contentStyle: {
+            backgroundColor: "#fff",
+          },
+        }}
+      />
     </Stack>
   );
 };

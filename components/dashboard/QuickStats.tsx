@@ -4,6 +4,7 @@ import { Colors, Typography, Spacing, BorderRadius } from "@/constants";
 import { useTimeBankStore } from "@/store/timeBankStore";
 import { useShallow } from "zustand/react/shallow";
 import { INITIAL_TIME_BANK_STATE } from "@/data/timebank";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 const QuickStats = () => {
   const { dailyEarned, dailySpent } = useTimeBankStore(
     useShallow((state) => ({
@@ -34,7 +35,11 @@ const QuickStats = () => {
           <View
             style={[styles.statIcon, { backgroundColor: Colors.success[100] }]}
           >
-            <Text style={styles.statEmoji}>💰</Text>
+            <MaterialCommunityIcons
+              name="cash"
+              size={24}
+              color={Colors.success[500]}
+            />
           </View>
           <Text style={styles.statLabel}>Today Earned:</Text>
           <Text style={styles.statValue}>+{displayDailyEarned} min</Text>
@@ -43,7 +48,11 @@ const QuickStats = () => {
           <View
             style={[styles.statIcon, { backgroundColor: Colors.primary[100] }]}
           >
-            <Text style={styles.statEmoji}>💳</Text>
+            <MaterialCommunityIcons
+              name="credit-card"
+              size={24}
+              color={Colors.primary[500]}
+            />
           </View>
           <Text style={styles.statLabel}>Today Spent:</Text>
           <Text style={styles.statValue}>{displayDailySpent} min </Text>
@@ -52,7 +61,11 @@ const QuickStats = () => {
           <View
             style={[styles.statIcon, { backgroundColor: Colors.warning[100] }]}
           >
-            <Text style={styles.statEmoji}>🔥</Text>
+            <MaterialCommunityIcons
+              name="fire"
+              size={24}
+              color={Colors.warning[500]}
+            />
           </View>
           <Text style={styles.statLabel}>Streak:</Text>
           <Text style={styles.statValue}>{displayStreak} days</Text>
@@ -86,21 +99,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   statIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: Spacing.xs,
-  },
-  statEmoji: {
-    fontSize: Typography.fontSize["2xl"],
   },
   statLabel: {
     fontFamily: Typography.fontFamily.brandSemibold,
     fontWeight: Typography.fontWeight.semibold,
     fontSize: Typography.fontSize.sm,
-    color: Colors.text.secondary,
+    color: Colors.gray[600],
     textAlign: "center",
     marginBottom: Spacing.xs,
   },
