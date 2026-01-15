@@ -7,6 +7,7 @@ import Animated, {
   withSpring,
   withDelay,
   Easing,
+  runOnJS,
 } from "react-native-reanimated";
 
 interface ConfettiCelebrationProps {
@@ -30,7 +31,7 @@ export function ConfettiCelebration({ visible }: ConfettiCelebrationProps) {
       // When hiding, start fade-out animation
       opacity.value = withTiming(0, { duration: 300 }, () => {
         // After fade-out completes, unmount the component
-        setIsMounted(false);
+        runOnJS(setIsMounted)(false);
       });
     }
   }, [visible]);
