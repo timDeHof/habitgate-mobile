@@ -24,7 +24,7 @@ import { renderIcon } from "@/components/habits/HabitCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Debugging utilities
-const DEBUG_MODE = true;
+const DEBUG_MODE = process.env.NODE_ENV === 'development';
 const DEBUG_PREFIX = "[HabitDetailModal]";
 
 function debugLog(message: string, data?: any) {
