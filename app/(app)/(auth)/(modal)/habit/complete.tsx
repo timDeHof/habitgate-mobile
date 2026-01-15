@@ -176,7 +176,7 @@ export default function HabitCompletionModal() {
       setIsCompleting(false);
       setShowConfetti(false);
       // Show error to user
-      alert("Failed to complete habit. Please try again.");
+      Alert.alert("Error", "Failed to complete habit. Please try again.");
     }
   };
 
