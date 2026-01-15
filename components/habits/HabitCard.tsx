@@ -111,19 +111,21 @@ export function HabitCard({ habit, onPress, onCompletePress }: HabitCardProps) {
             <Text style={styles.reward}>+{habit.rewardAmount} min</Text>
 
 {canComplete ? (
-  <TouchableOpacity
-    onPress={() => {
-      onCompletePress?.();
-      router.push({
-        pathname: "/(app)/(auth)/(modal)/habit/complete",
-        params: { habitId: habit.id },
-      });
+  <Link
+    href={{
+      pathname: "/(app)/(auth)/(modal)/habit/complete", 
+      params: { habitId: habit.id },
     }}
-    activeOpacity={0.8}
-    style={styles.completeButton}
+    asChild
+    onPress={(e) => {
+      e.stopPropagation();
+      onCompletePress?.();
+    }}
   >
-    <Text style={styles.completeButtonText}>Complete</Text>
-  </TouchableOpacity>
+    <TouchableOpacity activeOpacity={0.8} style={styles.completeButton}>
+      <Text style={styles.completeButtonText}>Complete</Text>
+    </TouchableOpacity>
+  </Link>
             ) : (
               <View style={styles.doneButton}>
                 <Text style={styles.doneButtonText}>
