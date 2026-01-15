@@ -195,9 +195,6 @@ export default function HabitCompletionModal() {
       // Complete habit
       completeHabit(habit.id, selectedMethod);
 
-      // Complete habit
-      completeHabit(habit.id, selectedMethod);
-
       // Note: Time balance is already added by completeHabit via timeBankStore
 
       // Note: XP is already added by completeHabit via gamificationStore
@@ -306,7 +303,9 @@ export default function HabitCompletionModal() {
               Photo
             </Text>
             <View style={styles.bonusBadge}>
-              <Text style={styles.bonusText}>+10 XP</Text>
+              <Text style={styles.bonusText}>
+                +{Math.floor(habit.rewardAmount * 2 * 0.2)} XP
+              </Text>
             </View>
           </TouchableOpacity>
 

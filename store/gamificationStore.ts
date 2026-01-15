@@ -11,6 +11,11 @@ import {
 } from "@/utils/calculations/xp";
 import { useHabitsStore } from "@/store/habitsStore";
 import { useTimeBankStore } from "@/store/timeBankStore";
+
+function getXPForLevel(level: number): number {
+  return Math.floor(100 * Math.pow(1.5, level - 1));
+}
+
 interface GamificationActions {
   addXP: (amount: number) => void;
   updateStreak: () => void;
@@ -156,6 +161,3 @@ export const useGamificationStore = create<GamificationStore>()(
     }
   )
 );
-function getXPForLevel(level: number): number {
-  return Math.floor(100 * Math.pow(1.5, level - 1));
-}
