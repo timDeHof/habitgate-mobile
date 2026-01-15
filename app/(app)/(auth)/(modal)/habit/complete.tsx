@@ -21,6 +21,8 @@ import { useTimeBankStore } from "@/store/timeBankStore";
 import { useGamificationStore } from "@/store/gamificationStore";
 import { IconSpec, VectorIconLibrary } from "@/data/habits";
 import { ConfettiCelebration } from "@/components/animations/ConfettiCelebration";
+import { calculateRewards } from "@/utils/calculations/rewards";
+import { Alert } from "react-native";
 
 type VerificationMethod = "manual" | "timer" | "photo" | "integration";
 
@@ -80,7 +82,7 @@ export default function HabitCompletionModal() {
 
   /**
    * Centralized XP calculation function to ensure consistency between preview and confirmation
-   * Incorporates base XP, conditional streak bonus, and verification bonuses
+   * Uses the shared calculateRewards function to align with actual XP calculation
    * @param habitRewardAmount - The habit's reward amount in minutes
    * @param currentStreakCount - Current streak count for streak bonus calculation
    * @param verificationMethod - Selected verification method for bonus calculation
@@ -96,10 +98,48 @@ export default function HabitCompletionModal() {
     streakBonus: number;
     verificationBonus: number;
   } => {
-    const baseXP = habitRewardAmount * 2; // 2 XP per minute
-    const streakBonus = currentStreakCount > 0 ? Math.floor(baseXP * 0.1) : 0; // 10% streak bonus only if streak exists
-    const verificationBonus = verificationMethod === "photo" ? 10 : 0;
-    const totalXP = baseXP + streakBonus + verificationBonus;
+    // Create a mock habit object for calculateRewards
+    const mockHabit: any = {
+      id: "temp",
+      name: "temp",
+      icon: {
+        type: "vector",
+        library: "MaterialCommunityIcons",
+        name: "help-circle",
+      },
+      category: "physical",
+      rewardAmount: habitRewardAmount,
+      difficulty: "medium",
+      verificationMethod: verificationMethod,
+      frequencyType: "daily",
+      isActive: true,
+      completedToday: false,
+      completionCountToday: 0,
+      currentStreak: currentStreakCount,
+      longestStreak: 0,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      optimalTimeStart: undefined,
+      optimalTimeEnd: undefined,
+    };
+
+    // Calculate rewards using the shared implementation
+    const rewards = calculateRewards(mockHabit, []);
+
+    // Extract base XP (2 XP per minute)
+    const baseXP = habitRewardAmount * 2;
+
+    // Calculate streak bonus based on the streak multiplier
+    const streakMultiplier = rewards.multipliers.streak || 1;
+    const streakBonus = Math.floor(baseXP * (streakMultiplier - 1));
+
+    // Calculate verification bonus
+    const verificationBonus = rewards.multipliers.verification
+      ? Math.floor(baseXP * 0.2)
+      : 0;
+
+    // Calculate total XP
+    const totalXP = rewards.xpEarned;
 
     return { totalXP, baseXP, streakBonus, verificationBonus };
   };
