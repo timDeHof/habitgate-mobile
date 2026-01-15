@@ -161,13 +161,7 @@ export default function HabitCompletionModal() {
         duration: habit.rewardAmount,
       });
 
-      // Add XP using centralized calculation for consistency
-      const { totalXP } = computeXP(
-        habit.rewardAmount,
-        currentStreak,
-        selectedMethod
-      );
-      addXP(totalXP);
+      // Note: XP is already added by completeHabit via gamificationStore
 
       // Only show confetti and navigate on success
       setShowConfetti(true);
