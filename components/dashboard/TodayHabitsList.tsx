@@ -39,7 +39,7 @@ const TodayHabits = () => {
   ];
 
   const renderHabit = ({ item }: { item: Habit }) => (
-    <HabitCard habit={item} onPress={() => completeHabit(item.id)} />
+    <HabitCard habit={item} />
   );
 
   const renderSectionHeader = ({
