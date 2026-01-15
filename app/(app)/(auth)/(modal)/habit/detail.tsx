@@ -363,25 +363,42 @@ export default function HabitDetailScreen() {
                 Last 7 days: {completionRate}% completion rate
               </Text>
               <View style={styles.historyBars}>
-                {[...Array(7)].map((_, i) => {
-                  const dayIndex = 6 - i; // Show most recent days first
-                  const isCompleted = Math.random() > 0.3; // Simulated data
-                  return (
-                    <View key={i} style={styles.historyBarContainer}>
-                      <View
-                        style={[
-                          styles.historyBar,
-                          isCompleted
-                            ? styles.historyBarCompleted
-                            : styles.historyBarMissed,
-                        ]}
-                      />
-                      <Text style={styles.historyDay}>
-                        {["S", "M", "T", "W", "T", "F", "S"][dayIndex]}
-                      </Text>
-                    </View>
-                  );
-                })}
+  // Generate stable completion history data
+  const completionHistory = useMemo(() => {
+    return [...Array(7)].map((_, i) => ({
+      dayIndex: 6 - i,
+      isCompleted: Math.random() > 0.3, // TODO: Replace with actual completion data
+    }));
+  }, [habit?.id]); // Regenerate only when habit changes
+
+  return (
+    {/* Completion History */}
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>Completion History</Text>
+      <View style={styles.historyContainer}>
+        <Text style={styles.historyText}>
+          Last 7 days: {completionRate}% completion rate
+        </Text>
+        <View style={styles.historyBars}>
+          {completionHistory.map(({ dayIndex, isCompleted }, i) => (
+            <View key={i} style={styles.historyBarContainer}>
+              <View
+                style={[
+                  styles.historyBar,
+                  isCompleted
+                    ? styles.historyBarCompleted
+                    : styles.historyBarMissed,
+                ]}
+              />
+              <Text style={styles.historyDay}>
+                {["S", "M", "T", "W", "T", "F", "S"][dayIndex]}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </View>
+    </View>
+  );
               </View>
             </View>
           </View>
