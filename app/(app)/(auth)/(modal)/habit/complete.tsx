@@ -195,11 +195,10 @@ export default function HabitCompletionModal() {
       // Complete habit
       completeHabit(habit.id, selectedMethod);
 
-      // Add time to bank
-      addBalance(habit.rewardAmount, "habit", {
-        habitName: habit.name,
-        duration: habit.rewardAmount,
-      });
+      // Complete habit
+      completeHabit(habit.id, selectedMethod);
+
+      // Note: Time balance is already added by completeHabit via timeBankStore
 
       // Note: XP is already added by completeHabit via gamificationStore
 
