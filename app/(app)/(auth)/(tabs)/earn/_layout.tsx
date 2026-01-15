@@ -7,7 +7,11 @@ import { useRouter } from "expo-router";
 const Layout = () => {
   const router = useRouter();
   return (
-    <Stack screenOptions={{ contentStyle: { backgroundColor: "#fff" } }}>
+    <Stack
+      screenOptions={{
+        contentStyle: { backgroundColor: Colors.background.primary },
+      }}
+    >
       <Stack.Screen
         name="index"
         options={{

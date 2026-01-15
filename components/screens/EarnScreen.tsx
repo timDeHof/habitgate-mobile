@@ -35,8 +35,10 @@ export default function EarnScreen() {
 
   const filteredHabits =
     selectedCategory === "all"
-      ? habits
-      : habits.filter((h) => h.category === selectedCategory);
+      ? habits.filter((h) => !h.completedToday)
+      : habits.filter(
+          (h) => h.category === selectedCategory && !h.completedToday
+        );
 
   return (
     <View style={styles.container}>
