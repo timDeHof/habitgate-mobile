@@ -24,7 +24,7 @@ import { renderIcon } from "@/components/habits/HabitCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Debugging utilities
-const DEBUG_MODE = process.env.NODE_ENV === 'development';
+const DEBUG_MODE = process.env.NODE_ENV === "development";
 const DEBUG_PREFIX = "[HabitDetailModal]";
 
 function debugLog(message: string, data?: any) {
@@ -51,10 +51,21 @@ interface HabitDetailModalProps {
   onClose: () => void;
 }
 
-export default function HabitDetailScreen() {
+interface HabitDetailScreenProps {
+  habitId?: string;
+  onClose?: () => void;
+}
+
+export default function HabitDetailScreen({
+  habitId: propHabitId,
+  onClose: propOnClose,
+}: HabitDetailScreenProps = {}) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { habitId } = useLocalSearchParams<{ habitId: string }>();
+  const { habitId: routeHabitId } = useLocalSearchParams<{ habitId: string }>();
+
+  // Use prop habitId if provided, otherwise fall back to route parameter
+  const effectiveHabitId = propHabitId || routeHabitId;
   const { habits, completeHabit, updateHabit } = useHabitsStore();
   const [showConfetti, setShowConfetti] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -72,7 +83,10 @@ export default function HabitDetailScreen() {
 
   // Debug: Component lifecycle tracking
   useEffect(() => {
-    debugLog("Component mounted", { habitId, component: "HabitDetailScreen" });
+    debugLog("Component mounted", {
+      habitId: effectiveHabitId,
+      component: "HabitDetailScreen",
+    });
     componentMounted.current = true;
 
     // Android-specific view hierarchy fix
@@ -83,7 +97,7 @@ export default function HabitDetailScreen() {
     }
 
     return () => {
-      debugLog("Component unmounted", { habitId });
+      debugLog("Component unmounted", { habitId: effectiveHabitId });
       componentMounted.current = false;
     };
   }, []);
@@ -92,51 +106,63 @@ export default function HabitDetailScreen() {
   const habit = useMemo(() => {
     try {
       debugLog("Finding habit by ID", {
-        habitId,
+        habitId: effectiveHabitId,
         availableHabits: habits.length,
       });
-      const foundHabit = habits.find((h) => h.id === habitId);
+      const foundHabit = habits.find((h) => h.id === effectiveHabitId);
       if (!foundHabit) {
-        debugError(new Error(`Habit not found: ${habitId}`), "habit_lookup", {
-          availableHabits: habits.map((h) => h.id),
-        });
+        debugError(
+          new Error(`Habit not found: ${effectiveHabitId}`),
+          "habit_lookup",
+          {
+            availableHabits: habits.map((h) => h.id),
+          }
+        );
       }
       return foundHabit;
     } catch (error) {
       debugError(error as Error, "habit_lookup_failed", {
-        habitId,
+        habitId: effectiveHabitId,
         habitsCount: habits.length,
       });
       setMountError(error as Error);
       return null;
     }
-  }, [habits, habitId]);
+  }, [habits, effectiveHabitId]);
 
   // Debug: Store state monitoring
   useEffect(() => {
     debugLog("Store state updated", {
       habitsCount: habits.length,
-      habitId,
+      habitId: effectiveHabitId,
       habitFound: !!habit,
     });
-  }, [habits, habitId, habit]);
+  }, [habits, effectiveHabitId, habit]);
 
   const handleClose = () => {
     try {
-      debugLog("Close button pressed", { habitId });
-      router.back();
+      debugLog("Close button pressed", { habitId: effectiveHabitId });
+      if (propOnClose) {
+        propOnClose();
+      } else {
+        router.back();
+      }
     } catch (error) {
       debugError(error as Error, "navigation_failure", {
         action: "back",
-        habitId,
+        habitId: effectiveHabitId,
         errorDetails: error,
       });
       // Fallback navigation
       try {
-        router.back();
+        if (propOnClose) {
+          propOnClose();
+        } else {
+          router.back();
+        }
       } catch (fallbackError) {
         debugError(fallbackError as Error, "fallback_navigation_failed", {
-          habitId,
+          habitId: effectiveHabitId,
         });
         // Last resort - navigate to home
         router.push("/(app)/(auth)/(tabs)/home");
@@ -156,6 +182,14 @@ export default function HabitDetailScreen() {
     if (!habit) return 0;
     return Math.min(1, habit.currentStreak / 30); // Cap at 30 days for visualization
   }, [habit]);
+
+  // Generate stable completion history data
+  const completionHistory = useMemo(() => {
+    return [...Array(7)].map((_, i) => ({
+      dayIndex: 6 - i,
+      isCompleted: Math.random() > 0.3, // TODO: Replace with actual completion data
+    }));
+  }, [habit?.id]); // Regenerate only when habit changes
 
   // Handle habit completion with debugging
   const handleComplete = async () => {
@@ -363,42 +397,21 @@ export default function HabitDetailScreen() {
                 Last 7 days: {completionRate}% completion rate
               </Text>
               <View style={styles.historyBars}>
-  // Generate stable completion history data
-  const completionHistory = useMemo(() => {
-    return [...Array(7)].map((_, i) => ({
-      dayIndex: 6 - i,
-      isCompleted: Math.random() > 0.3, // TODO: Replace with actual completion data
-    }));
-  }, [habit?.id]); // Regenerate only when habit changes
-
-  return (
-    {/* Completion History */}
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>Completion History</Text>
-      <View style={styles.historyContainer}>
-        <Text style={styles.historyText}>
-          Last 7 days: {completionRate}% completion rate
-        </Text>
-        <View style={styles.historyBars}>
-          {completionHistory.map(({ dayIndex, isCompleted }, i) => (
-            <View key={i} style={styles.historyBarContainer}>
-              <View
-                style={[
-                  styles.historyBar,
-                  isCompleted
-                    ? styles.historyBarCompleted
-                    : styles.historyBarMissed,
-                ]}
-              />
-              <Text style={styles.historyDay}>
-                {["S", "M", "T", "W", "T", "F", "S"][dayIndex]}
-              </Text>
-            </View>
-          ))}
-        </View>
-      </View>
-    </View>
-  );
+                {completionHistory.map(({ dayIndex, isCompleted }, i) => (
+                  <View key={i} style={styles.historyBarContainer}>
+                    <View
+                      style={[
+                        styles.historyBar,
+                        isCompleted
+                          ? styles.historyBarCompleted
+                          : styles.historyBarMissed,
+                      ]}
+                    />
+                    <Text style={styles.historyDay}>
+                      {["S", "M", "T", "W", "T", "F", "S"][dayIndex]}
+                    </Text>
+                  </View>
+                ))}
               </View>
             </View>
           </View>
@@ -522,7 +535,7 @@ export default function HabitDetailScreen() {
 }
 
 export function HabitDetailModal({ habitId, onClose }: HabitDetailModalProps) {
-  return <HabitDetailScreen />;
+  return <HabitDetailScreen habitId={habitId} onClose={onClose} />;
 }
 
 const styles = StyleSheet.create({
