@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   SectionListData,
 } from "react-native";
-import { habits } from "@/data/habits";
+import { useHabitsStore } from "@/store/habitsStore";
 import {
   Colors,
   Typography,
@@ -16,14 +16,16 @@ import {
 } from "@/constants";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { HabitCard } from "../habits/HabitCard";
+import { Habit } from "@/data/habits";
 
 interface HabitSection {
   title: string;
-  data: (typeof habits)[0][];
+  data: Habit[];
 }
 
 const TodayHabits = () => {
   const [showAll, setShowAll] = useState(false);
+  const { habits, completeHabit, addHabit } = useHabitsStore();
 
   // Show only 2 habits initially, or all habits if showAll is true
   const displayedHabits = showAll ? habits : habits.slice(0, 2);
@@ -36,14 +38,14 @@ const TodayHabits = () => {
     },
   ];
 
-  const renderHabit = ({ item }: { item: (typeof habits)[0] }) => (
-    <HabitCard habit={item} onPress={() => {}} />
+  const renderHabit = ({ item }: { item: Habit }) => (
+    <HabitCard habit={item} onPress={() => completeHabit(item.id)} />
   );
 
   const renderSectionHeader = ({
     section: { title },
   }: {
-    section: SectionListData<(typeof habits)[0], HabitSection>;
+    section: SectionListData<Habit, HabitSection>;
   }) => (
     <View style={styles.header}>
       <Text style={styles.title}>{title}</Text>
