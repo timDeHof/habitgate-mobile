@@ -66,7 +66,7 @@ export default function HabitDetailScreen({
 
   // Use prop habitId if provided, otherwise fall back to route parameter
   const effectiveHabitId = propHabitId || routeHabitId;
-  const { habits, completeHabit, updateHabit } = useHabitsStore();
+  const { habits, completeHabit, updateHabit, getCompletions } = useHabitsStore();
   const [showConfetti, setShowConfetti] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedHabit, setEditedHabit] = useState<Partial<Habit>>({});
@@ -458,17 +458,6 @@ export default function HabitDetailScreen({
                 XP Reward:{" "}
                 <Text style={styles.xpValue}>{habit.rewardAmount} XP</Text>
               </Text>
-const { getCompletions } = useHabitsStore();
-const totalCompletions = useMemo(() => {
-  return getCompletions(habit?.id).length;
-}, [habit?.id, getCompletions]);
-
-{/* Progress Stats */}
-<View style={styles.progressContainer}>
-  <Text style={styles.progressText}>
-    Total Completions: <Text style={styles.progressValue}>{totalCompletions}</Text>
-  </Text>
-</View>
             </View>
           </View>
 
@@ -766,6 +755,15 @@ const styles = StyleSheet.create({
     fontFamily: Typography.fontFamily.brandBold,
     fontSize: Typography.fontSize.base,
     color: Colors.primary[500],
+  },
+  progressContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: Spacing.md,
+    backgroundColor: Colors.background.primary,
+    borderRadius: BorderRadius.md,
+    marginTop: Spacing.sm,
   },
   analyticsContainer: {
     marginTop: Spacing.sm,
