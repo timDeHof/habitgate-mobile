@@ -458,9 +458,17 @@ export default function HabitDetailScreen({
                 XP Reward:{" "}
                 <Text style={styles.xpValue}>{habit.rewardAmount} XP</Text>
               </Text>
-              <Text style={styles.progressText}>
-                Total Completions: <Text style={styles.progressValue}>42</Text>
-              </Text>
+const { getCompletions } = useHabitsStore();
+const totalCompletions = useMemo(() => {
+  return getCompletions(habit?.id).length;
+}, [habit?.id, getCompletions]);
+
+{/* Progress Stats */}
+<View style={styles.progressContainer}>
+  <Text style={styles.progressText}>
+    Total Completions: <Text style={styles.progressValue}>{totalCompletions}</Text>
+  </Text>
+</View>
             </View>
           </View>
 

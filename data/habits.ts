@@ -1381,7 +1381,7 @@ export const HabitGenerator = {
   ): FrequencyConfig | undefined => {
     const rng = random || Math.random;
     switch (type) {
-      case "specific_days":
+      case "specific_days": {
         const days: number[] = [];
         const dayCount = Math.floor(rng() * 3) + 2; // 2-4 days per week
         for (let i = 0; i < dayCount; i++) {
@@ -1392,6 +1392,7 @@ export const HabitGenerator = {
           days.push(day);
         }
         return { daysOfWeek: days.sort((a, b) => a - b) };
+      }
       case "flexible":
         return { minimumPerWeek: [2, 3, 4][Math.floor(rng() * 3)] };
       default:
