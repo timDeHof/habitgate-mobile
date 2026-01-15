@@ -6,6 +6,8 @@
  * for better separation of concerns.
  */
 
+import { SvgProps } from "react-native-svg";
+
 // ============================================================================
 // Enums (String Literal Types for Type Safety)
 // ============================================================================
@@ -146,7 +148,7 @@ export interface SVGIconSpec {
   /** SVG element name or custom SVG component identifier */
   name: string;
   /** Optional SVG props for customization */
-  props?: React.SVGProps<SVGSVGElement>;
+  props?: SvgProps;
   /** Size specification (maintains consistency with vector icons) */
   size?: number;
   /** Color specification */
@@ -190,7 +192,7 @@ export type PartialVectorIconSpec = {
 export type PartialSvgIconSpec = {
   type: "svg";
   name: string;
-  props?: React.SVGProps<SVGSVGElement>;
+  props?: Partial<SvgProps>;
   size?: number;
   color?: string;
 };
@@ -939,9 +941,13 @@ export const HabitGenerator = {
   /**
    * Generate realistic dummy habit data
    * @param config - Generation configuration
+   * @param random - Optional PRNG function for deterministic generation
    * @returns Array of generated habits
    */
-  generateDummyHabits: (config: HabitGenerationConfig = {}): Habit[] => {
+  generateDummyHabits: (
+    config: HabitGenerationConfig = {},
+    random?: () => number
+  ): Habit[] => {
     const {
       count = 10,
       nonCompletedOnly = true,
@@ -950,8 +956,13 @@ export const HabitGenerator = {
       frequencyDistribution = { daily: 60, specific_days: 25, flexible: 15 },
     } = config;
 
+    // Use provided random function or fallback to Math.random
+    const rng = random || Math.random;
+
     const habits: Habit[] = [];
-    const baseTimestamp = Date.now();
+    const baseTimestamp = random
+      ? Math.floor(Date.now() / 1000) * 1000
+      : Math.floor(Date.now() / 1000) * 1000;
 
     // Predefined icon configurations for realistic variety
     const iconPresets: Record<string, IconSpec> = {
@@ -1277,16 +1288,13 @@ export const HabitGenerator = {
 
     for (let i = 0; i < count; i++) {
       // Select random template
-      const templateIndex = Math.floor(
-        Math.random() * filteredTemplates.length
-      );
+      const templateIndex = Math.floor(rng() * filteredTemplates.length);
       const template = filteredTemplates[templateIndex];
 
       // Generate realistic variations
       const rewardAmount =
         Math.floor(
-          Math.random() *
-            (template.rewardRange[1] - template.rewardRange[0] + 1)
+          rng() * (template.rewardRange[1] - template.rewardRange[0] + 1)
         ) + template.rewardRange[0];
 
       // Create habit with realistic patterns
@@ -1303,34 +1311,32 @@ export const HabitGenerator = {
         difficulty: template.difficulty,
         verificationMethod: template.verificationMethod,
         verificationConfig: HabitGenerator.getVerificationConfig(
-          template.verificationMethod
+          template.verificationMethod,
+          rng
         ),
         frequencyType: template.frequencyType,
         frequencyConfig: HabitGenerator.getFrequencyConfig(
-          template.frequencyType
+          template.frequencyType,
+          rng
         ),
         optimalTimeStart: template.optimalTime?.[0],
         optimalTimeEnd: template.optimalTime?.[1],
         isActive: true,
-        completedToday: nonCompletedOnly ? false : Math.random() < 0.3,
-        completionCountToday: nonCompletedOnly
-          ? 0
-          : Math.random() < 0.3
-          ? 1
-          : 0,
-        currentStreak: Math.floor(Math.random() * 15),
+        completedToday: nonCompletedOnly ? false : rng() < 0.3,
+        completionCountToday: nonCompletedOnly ? 0 : rng() < 0.3 ? 1 : 0,
+        currentStreak: Math.floor(rng() * 15),
         longestStreak: Math.max(
-          Math.floor(Math.random() * 30) + 5,
-          Math.floor(Math.random() * 15)
+          Math.floor(rng() * 30) + 5,
+          Math.floor(rng() * 15)
         ),
         lastCompletedDate: nonCompletedOnly
           ? undefined
-          : Math.random() < 0.5
-          ? new Date(Date.now() - 86400000 * Math.floor(Math.random() * 3))
+          : rng() < 0.5
+          ? new Date(baseTimestamp - 86400000 * Math.floor(rng() * 3))
               .toISOString()
               .split("T")[0]
           : undefined,
-        createdAt: baseTimestamp - Math.floor(Math.random() * 30) * 86400000,
+        createdAt: baseTimestamp - Math.floor(rng() * 30) * 86400000,
         updatedAt: baseTimestamp,
       };
 
@@ -1344,20 +1350,22 @@ export const HabitGenerator = {
    * Generate verification config based on method
    */
   getVerificationConfig: (
-    method: VerificationMethod
+    method: VerificationMethod,
+    random?: () => number
   ): VerificationConfig | undefined => {
+    const rng = random || Math.random;
     switch (method) {
       case "timer":
-        return { duration: [15, 30, 45, 60][Math.floor(Math.random() * 4)] };
+        return { duration: [15, 30, 45, 60][Math.floor(rng() * 4)] };
       case "integration":
         return {
-          integrationId: `integration_${Math.floor(Math.random() * 1000)}`,
+          integrationId: `integration_${Math.floor(rng() * 1000)}`,
         };
       case "location":
         return {
-          locationLat: 37.7749 + (Math.random() - 0.5) * 0.1,
-          locationLng: -122.4194 + (Math.random() - 0.5) * 0.1,
-          locationRadius: [100, 200, 500][Math.floor(Math.random() * 3)],
+          locationLat: 37.7749 + (rng() - 0.5) * 0.1,
+          locationLng: -122.4194 + (rng() - 0.5) * 0.1,
+          locationRadius: [100, 200, 500][Math.floor(rng() * 3)],
         };
       default:
         return undefined;
@@ -1367,21 +1375,25 @@ export const HabitGenerator = {
   /**
    * Generate frequency config based on type
    */
-  getFrequencyConfig: (type: FrequencyType): FrequencyConfig | undefined => {
+  getFrequencyConfig: (
+    type: FrequencyType,
+    random?: () => number
+  ): FrequencyConfig | undefined => {
+    const rng = random || Math.random;
     switch (type) {
       case "specific_days":
         const days: number[] = [];
-        const dayCount = Math.floor(Math.random() * 3) + 2; // 2-4 days per week
+        const dayCount = Math.floor(rng() * 3) + 2; // 2-4 days per week
         for (let i = 0; i < dayCount; i++) {
           let day;
           do {
-            day = Math.floor(Math.random() * 7);
+            day = Math.floor(rng() * 7);
           } while (days.includes(day));
           days.push(day);
         }
         return { daysOfWeek: days.sort((a, b) => a - b) };
       case "flexible":
-        return { minimumPerWeek: [2, 3, 4][Math.floor(Math.random() * 3)] };
+        return { minimumPerWeek: [2, 3, 4][Math.floor(rng() * 3)] };
       default:
         return undefined;
     }
@@ -1392,10 +1404,12 @@ export const HabitGenerator = {
    */
   generateRealisticCompletions: (
     habits: Habit[],
-    daysBack: number = 7
+    daysBack: number = 7,
+    random?: () => number
   ): HabitCompletion[] => {
+    const rng = random || Math.random;
     const completions: HabitCompletion[] = [];
-    const now = Date.now();
+    const now = Math.floor(Date.now() / 1000) * 1000;
 
     habits.forEach((habit) => {
       // Generate completions for past days
@@ -1410,9 +1424,9 @@ export const HabitGenerator = {
           hard: 0.3,
         }[habit.difficulty];
 
-        if (Math.random() < completionProbability) {
+        if (rng() < completionProbability) {
           const { timeEarned, xpEarned, multipliers } =
-            HabitGenerator.calculateDummyRewards(habit);
+            HabitGenerator.calculateDummyRewards(habit, rng);
 
           completions.push({
             id: `completion_${habit.id}_${day}`,
@@ -1444,7 +1458,8 @@ export const HabitGenerator = {
   /**
    * Calculate realistic rewards for dummy habits
    */
-  calculateDummyRewards: (habit: Habit) => {
+  calculateDummyRewards: (habit: Habit, random?: () => number) => {
+    const rng = random || Math.random;
     const baseTime = habit.rewardAmount;
     const baseXP = habit.rewardAmount;
 
@@ -1464,7 +1479,7 @@ export const HabitGenerator = {
       location: 1.15,
     }[habit.verificationMethod];
 
-    const timeMultiplier = Math.random() * 0.2 + 0.9; // 0.9-1.1 range
+    const timeMultiplier = rng() * 0.2 + 0.9; // 0.9-1.1 range
 
     const timeEarned = Math.round(
       baseTime * streakMultiplier * verificationMultiplier * timeMultiplier
@@ -1533,30 +1548,27 @@ export const generateAndIntegrateDummyHabits = (
   habits: Habit[];
   completions: HabitCompletion[];
 } => {
-  // Use seed for deterministic generation if provided
-  if (seed !== undefined) {
-    Math.random = seededRandom(seed);
-  }
+  // Create seeded PRNG if seed is provided
+  const random = seed !== undefined ? seededRandom(seed) : undefined;
 
   // Generate 15 diverse, non-completed dummy habits
-  const dummyHabits = HabitGenerator.generateDummyHabits({
-    count: 15,
-    nonCompletedOnly: true,
-    categories: ["physical", "mental", "creative", "social", "productive"],
-    difficultyWeights: { easy: 35, medium: 40, hard: 25 },
-    frequencyDistribution: { daily: 50, specific_days: 30, flexible: 20 },
-  });
+  const dummyHabits = HabitGenerator.generateDummyHabits(
+    {
+      count: 15,
+      nonCompletedOnly: true,
+      categories: ["physical", "mental", "creative", "social", "productive"],
+      difficultyWeights: { easy: 35, medium: 40, hard: 25 },
+      frequencyDistribution: { daily: 50, specific_days: 30, flexible: 20 },
+    },
+    random
+  );
 
   // Generate realistic completion patterns for the past week
   const dummyCompletions = HabitGenerator.generateRealisticCompletions(
     dummyHabits,
-    7
+    7,
+    random
   );
-
-  // Restore original Math.random if we used a seed
-  if (seed !== undefined) {
-    Math.random = originalMathRandom;
-  }
 
   return { habits: dummyHabits, completions: dummyCompletions };
 };
@@ -1569,24 +1581,28 @@ let _generatedData: { habits: Habit[]; completions: HabitCompletion[] } | null =
  * Memoized accessor for generated dummy data
  * Lazy initialization on first call to avoid module-load side effects
  */
-export const getGeneratedDummyData = (): {
+export const getGeneratedDummyData = (
+  seed?: number
+): {
   habits: Habit[];
   completions: HabitCompletion[];
 } => {
   if (!_generatedData) {
-    _generatedData = generateAndIntegrateDummyHabits();
+    _generatedData = generateAndIntegrateDummyHabits(seed);
   }
   return _generatedData;
 };
 
 // Helper for deterministic generation with seeds
-const originalMathRandom = Math.random;
-
 function seededRandom(seed: number): () => number {
+  // Use a more reliable seeded random algorithm
   let value = seed;
   return () => {
-    value = Math.sin(value) * 10000;
-    return value - Math.floor(value);
+    // Mulberry32 algorithm for better determinism
+    value = (value + 0x6d2b79f5) | 0;
+    value = Math.imul(value ^ (value >>> 15), value | 1);
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
   };
 }
 
