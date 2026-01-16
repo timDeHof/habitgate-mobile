@@ -1,11 +1,24 @@
 import { Platform, ViewStyle } from "react-native";
 
 export type Shadows = {
+  sm: ViewStyle;
   md: ViewStyle;
   lg: ViewStyle;
 };
 
 export const Shadows: Shadows = {
+  sm: Platform.select({
+    ios: {
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 2,
+    },
+    android: {
+      elevation: 2,
+    },
+    default: {},
+  }),
   md: Platform.select({
     ios: {
       shadowColor: "#000",

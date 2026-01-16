@@ -38,6 +38,8 @@ export interface TransactionMetadata {
   habitName?: string;
   /** Name of the app if source is app_unlock */
   appName?: string;
+  /** ID of the app if source is app_unlock */
+  appId?: string;
   /** Duration in minutes if applicable */
   duration?: number;
   /** Bonus multiplier applied if applicable */

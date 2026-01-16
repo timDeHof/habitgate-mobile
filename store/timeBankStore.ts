@@ -8,18 +8,23 @@ import {
   DAILY_EARNING_CAP,
   DAILY_SPENDING_CAP,
 } from "@/data/timebank";
+import {
+  ValidationResult,
+  validateEarnTransaction,
+  validateSpendTransaction,
+} from "@/utils/validation/timeBankValidation";
 
 interface TimeBankActions {
   addBalance: (
     amount: number,
     source: Transaction["sourceType"],
     metadata?: Transaction["metadata"]
-  ) => boolean;
+  ) => ValidationResult;
   deductBalance: (
     amount: number,
     source: Transaction["sourceType"],
     metadata?: Transaction["metadata"]
-  ) => boolean;
+  ) => ValidationResult;
   resetDailyCounters: () => void;
   getTransactions: (limit?: number) => Transaction[];
   getRemainingDailyCapacity: () => number;
@@ -43,9 +48,15 @@ export const useTimeBankStore = create<TimeBankStore>()(
           // Get fresh state after reset for accurate calculations
           state = get();
         }
-        // Check daily cap
+        // Validate
+        const validation = validateEarnTransaction(
+          amount,
+          state.dailyEarned,
+          DAILY_EARNING_CAP
+        );
+        if (!validation.valid) return validation;
+
         const remainingCapacity = DAILY_EARNING_CAP - state.dailyEarned;
-        if (remainingCapacity <= 0) return false;
         const cappedAmount = Math.min(amount, remainingCapacity);
         const newDailyEarned = state.dailyEarned + cappedAmount;
         const newBalance = state.balance + cappedAmount;
@@ -64,16 +75,22 @@ export const useTimeBankStore = create<TimeBankStore>()(
           dailyEarned: newDailyEarned,
           transactions: [transaction, ...state.transactions].slice(0, 50),
         });
-        return true;
+        return validation;
       },
       deductBalance: (amount, source, metadata) => {
         const state = get();
-        if (state.balance < amount) {
-          return false; // Insufficient balance
-        }
+        // Validate balance
+        const validation = validateSpendTransaction(amount, state.balance);
+        if (!validation.valid) return validation;
+
         // Check daily spending cap
         const remainingSpendingCapacity = DAILY_SPENDING_CAP - state.dailySpent;
-        if (remainingSpendingCapacity <= 0) return false;
+        if (remainingSpendingCapacity <= 0) {
+          return {
+            valid: false,
+            error: "Daily spending limit reached",
+          };
+        }
         const cappedAmount = Math.min(amount, remainingSpendingCapacity);
         const newBalance = state.balance - cappedAmount;
         const transaction: Transaction = {
@@ -91,7 +108,7 @@ export const useTimeBankStore = create<TimeBankStore>()(
           dailySpent: state.dailySpent + cappedAmount,
           transactions: [transaction, ...state.transactions].slice(0, 50),
         });
-        return true;
+        return validation;
       },
       resetDailyCounters: () => {
         const today = new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD in local timezone

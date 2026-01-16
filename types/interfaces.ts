@@ -1,6 +1,14 @@
 import { Habit, HabitCompletion } from "@/data/habits";
 import { Transaction, TransactionSourceType } from "@/data/timebank";
-import { LockedApp, UnlockSession } from "@/data/apps";
+import { DistractingApp } from "@/data/apps";
+import { ValidationResult } from "@/utils/validation/timeBankValidation";
+
+export type LockedApp = DistractingApp;
+
+export interface UnlockSession {
+  appId: string;
+  expiresAt: number;
+}
 
 export interface ITimeBankService {
   getBalance(): Promise<number>;
@@ -8,12 +16,12 @@ export interface ITimeBankService {
     amount: number,
     source: TransactionSourceType,
     metadata?: Transaction["metadata"]
-  ): Promise<boolean>;
+  ): Promise<ValidationResult>;
   deductBalance(
     amount: number,
     source: TransactionSourceType,
     metadata?: Transaction["metadata"]
-  ): Promise<boolean>;
+  ): Promise<ValidationResult>;
   getTransactions(limit?: number): Promise<Transaction[]>;
   getRemainingDailyCapacity(): Promise<number>;
 }

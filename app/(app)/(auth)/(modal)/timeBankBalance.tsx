@@ -19,6 +19,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
 import DailyStatsGrid from "@/components/dashboard/DailyStatsGrid";
 import BalanceStatusIndicator from "@/components/dashboard/BalanceStatusIndicator";
+import TransactionHistoryList from "@/components/dashboard/TransactionHistoryList";
+import { ScrollView, Alert } from "react-native";
 
 const GradientText = (props: React.ComponentProps<typeof Text>) => {
   return (
@@ -42,10 +44,12 @@ const GradientText = (props: React.ComponentProps<typeof Text>) => {
 };
 
 const TimeBankBalanceModal = () => {
-  const { balance, dailyEarned } = useTimeBankStore(
+  const { balance, dailyEarned, transactions, addBalance } = useTimeBankStore(
     useShallow((state) => ({
       balance: state.balance,
       dailyEarned: state.dailyEarned,
+      transactions: state.transactions,
+      addBalance: state.addBalance,
     }))
   );
 
@@ -68,8 +72,32 @@ const TimeBankBalanceModal = () => {
     return Math.round((displayDailyEarned / DAILY_EARNING_CAP) * 100);
   }, [displayDailyEarned]);
 
+  const handleEmergencyUnlock = () => {
+    Alert.alert(
+      "Emergency Unlock",
+      "Get 15 minutes immediately for $0.99? (Mock: Free for now)",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Unlock Now",
+          onPress: () => {
+            const result = addBalance(15, "emergency");
+            if (result.valid) {
+              Alert.alert("Success", "15 minutes added to your Time Bank!");
+            } else {
+              Alert.alert(
+                "Error",
+                result.error || "Could not add balance. Daily cap reached?"
+              );
+            }
+          },
+        },
+      ]
+    );
+  };
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Title */}
       <Text style={styles.title}>Daily Balance</Text>
 
@@ -117,7 +145,24 @@ const TimeBankBalanceModal = () => {
         isNearCap={isNearCap}
         isLowBalance={isLowBalance}
       />
-    </View>
+
+      {/* Emergency Unlock Button */}
+      {isLowBalance && (
+        <TouchableOpacity
+          style={styles.emergencyButton}
+          onPress={handleEmergencyUnlock}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.emergencyButtonText}>Emergency Unlock (15m)</Text>
+        </TouchableOpacity>
+      )}
+
+      {/* Transaction History */}
+      <TransactionHistoryList transactions={transactions} />
+
+      {/* Spacer for bottom padding */}
+      <View style={{ height: 40 }} />
+    </ScrollView>
   );
 };
 
@@ -197,5 +242,18 @@ const styles = StyleSheet.create({
   progressBarFill: {
     height: "100%",
     borderRadius: BorderRadius.full,
+  },
+  emergencyButton: {
+    backgroundColor: Colors.error[500],
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    alignItems: "center",
+    marginTop: Spacing.lg,
+    ...Shadows.md,
+  },
+  emergencyButtonText: {
+    color: "white",
+    fontFamily: Typography.fontFamily.brandBold,
+    fontSize: Typography.fontSize.base,
   },
 });
