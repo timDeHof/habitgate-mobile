@@ -17,7 +17,8 @@ import {
   Shadows,
 } from "@/constants";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 interface TimeBankCardProps {
   onPress?: () => void;
@@ -69,12 +70,21 @@ const TimeBankCard = ({ onPress }: TimeBankCardProps): React.ReactElement => {
           </View>
           <View style={styles.badgeContainer}>
             <View style={[styles.badge, styles.badgeEarn]}>
-              <Ionicons name="arrow-up" color={Colors.success[500]} size={16} />
+              <MaterialCommunityIcons
+                name="arrow-up"
+                color={Colors.success[500]}
+                size={16}
+              />
               <Text style={styles.badgeEarnText}>
                 + {displayDailyEarned} today
               </Text>
             </View>
             <View style={[styles.badge, styles.badgeSpent]}>
+              <MaterialCommunityIcons
+                name="arrow-down"
+                color="rgba(255,255,255, 0.9)"
+                size={16}
+              />
               <Text style={styles.badgeSpentText}>
                 - {displayDailySpent} today
               </Text>

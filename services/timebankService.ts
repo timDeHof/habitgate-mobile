@@ -15,6 +15,7 @@ import {
   TransactionSourceType,
   DAILY_EARNING_CAP,
 } from "@/data/timebank";
+import { ValidationResult } from "@/utils/validation/timeBankValidation";
 
 export class LocalTimeBankService implements ITimeBankService {
   async getBalance(): Promise<number> {
@@ -24,14 +25,14 @@ export class LocalTimeBankService implements ITimeBankService {
     amount: number,
     source: TransactionSourceType,
     metadata?: Transaction["metadata"]
-  ): Promise<boolean> {
+  ): Promise<ValidationResult> {
     return useTimeBankStore.getState().addBalance(amount, source, metadata);
   }
   async deductBalance(
     amount: number,
     source: TransactionSourceType,
     metadata?: Transaction["metadata"]
-  ): Promise<boolean> {
+  ): Promise<ValidationResult> {
     return useTimeBankStore.getState().deductBalance(amount, source, metadata);
   }
   async getTransactions(limit?: number): Promise<Transaction[]> {

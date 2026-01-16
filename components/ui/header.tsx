@@ -16,8 +16,14 @@ const Header = ({ title }: headerProps) => {
       <TouchableOpacity
         style={styles.profileButton}
         onPress={() => router.push("/profile")}
+        accessibilityLabel={`Go to ${user?.name || 'User'}'s profile`}
+        accessibilityRole="button"
+        accessibilityHint="Navigate to your profile page"
       >
-        <View style={styles.profileAvatar}>
+        <View 
+          style={styles.profileAvatar}
+          accessible={false}
+        >
           <Text style={styles.profileInitial}>
             {user?.name?.charAt(0) || "U"}
           </Text>
@@ -47,9 +53,9 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   profileAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: Colors.primary[100],
     alignItems: "center",
     justifyContent: "center",
