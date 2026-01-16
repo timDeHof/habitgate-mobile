@@ -68,6 +68,9 @@ export const useAppLockStore = create<AppLockStore>()(
       },
 
       unlockApp: (appId, durationMinutes) => {
+        if (durationMinutes <= 0) return;
+        const appExists = get().availableApps.some((a) => a.id === appId);
+        if (!appExists) return;
         const expiry = Date.now() + durationMinutes * 60 * 1000;
 
         set((state) => {
