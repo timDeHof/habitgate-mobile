@@ -1,7 +1,7 @@
 import { zustandStorage } from "@/store/zustandStorage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import type { User } from "@/data/user";
+import { User, parseUser } from "@/data/user";
 
 interface UserStore {
   isGuest: boolean;
@@ -21,6 +21,15 @@ const useUserStore = create<UserStore>()(
     {
       name: "user",
       storage: createJSONStorage(() => zustandStorage),
+      migrate: (persistedState: any) => {
+        if (persistedState && persistedState.user) {
+          return {
+            ...persistedState,
+            user: parseUser(persistedState.user),
+          };
+        }
+        return persistedState;
+      },
     }
   )
 );

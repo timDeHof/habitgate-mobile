@@ -23,6 +23,10 @@ export interface UserPreferences {
   theme: ThemeOption;
   /** Enable push notifications */
   notifications: boolean;
+  /** Enable sound effects */
+  sound?: boolean;
+  /** Enable vibration feedback */
+  vibration?: boolean;
   /** Strict mode for habit enforcement */
   strictMode: boolean;
   /** Daily reminder time in HH:mm format (24-hour) */
@@ -63,4 +67,41 @@ export interface CreateUserPayload {
   email: string;
   name: string;
   preferences?: Partial<UserPreferences>;
+}
+
+/**
+ * Normalizes and parses user preferences with sensible defaults
+ * @param prefs - Partial or raw user preferences
+ * @returns Fully populated UserPreferences object
+ */
+export function parseUserPreferences(
+  prefs?: Partial<UserPreferences>
+): UserPreferences {
+  return {
+    theme: prefs?.theme ?? THEME_OPTIONS.AUTO,
+    notifications: prefs?.notifications ?? true,
+    sound: prefs?.sound ?? true,
+    vibration: prefs?.vibration ?? true,
+    strictMode: prefs?.strictMode ?? false,
+    dailyReminderTime: prefs?.dailyReminderTime,
+    weeklyGoal: prefs?.weeklyGoal,
+  };
+}
+
+/**
+ * Normalizes and parses a User object with all nested defaults
+ * @param data - Raw user data from API or storage
+ * @returns Fully populated User object
+ */
+export function parseUser(data: any): User {
+  if (!data) throw new Error("parseUser: Data is required");
+
+  return {
+    id: data.id,
+    email: data.email,
+    name: data.name,
+    avatarUrl: data.avatarUrl,
+    createdAt: data.createdAt || Date.now(),
+    preferences: parseUserPreferences(data.preferences),
+  };
 }
