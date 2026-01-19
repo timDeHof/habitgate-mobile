@@ -272,12 +272,12 @@ export const TRANSACTIONS: Transaction[] = [
  */
 export const INITIAL_TIME_BANK_STATE: TimeBankState = {
   balance: 45,
-  lifetimeEarned: 2450,
-  lifetimeSpent: 680,
-  dailyEarned: 50,
-  dailySpent: 15,
-  lastResetDate: new Date().toLocaleDateString("en-CA"), // YYYY-MM-DD in local timezone
-  currentStreak: 5,
-  longestStreak: 12,
+  lifetimeEarned: 0,
+  lifetimeSpent: 0,
+  dailyEarned: 0,
+  dailySpent: 0,
+  lastResetDate: new Date().toLocaleDateString("en-CA"),
+  currentStreak: 0,
+  longestStreak: 0,
   transactions: [],
 };

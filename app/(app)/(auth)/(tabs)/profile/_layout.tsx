@@ -5,7 +5,15 @@ const Layout = () => {
       <Stack.Screen
         name="index"
         options={{
-          title: "Profile",
+          title: "",
+          headerLargeTitle: true,
+          headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name="settings"
+        options={{
+          title: "",
           headerLargeTitle: true,
           headerTransparent: true,
         }}

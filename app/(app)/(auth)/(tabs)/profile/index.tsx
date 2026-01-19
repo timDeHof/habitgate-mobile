@@ -1,13 +1,15 @@
 import useUserStore from "@/hooks/use-userstore";
-import { Button, Text, View, StyleSheet, ScrollView } from "react-native";
+import { Button, Text, View, StyleSheet, ScrollView, Pressable } from "react-native";
 import { useTimeBankStore } from "@/store/timeBankStore";
 import { useShallow } from "zustand/react/shallow";
 import { Colors, Spacing, Typography, BorderRadius, Shadows } from "@/constants";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useRouter } from "expo-router";
+import { withOpacity } from "@/utils/formatting/colors";
 
 const StatItem = ({ label, value, icon, color }: { label: string; value: string | number; icon: keyof typeof MaterialCommunityIcons.glyphMap; color: string }) => (
   <View style={styles.statItem}>
-    <View style={[styles.iconContainer, { backgroundColor: color + "20" }]}>
+    <View style={[styles.iconContainer, { backgroundColor: withOpacity(color, 0.12) }]}>
       <MaterialCommunityIcons name={icon} size={24} color={color} />
     </View>
     <View>
@@ -18,6 +20,7 @@ const StatItem = ({ label, value, icon, color }: { label: string; value: string 
 );
 
 const Page = () => {
+  const router = useRouter();
   const { setIsGuest } = useUserStore();
   const { lifetimeEarned, lifetimeSpent } = useTimeBankStore(
     useShallow((state) => ({
@@ -55,6 +58,21 @@ const Page = () => {
             icon="scale-balance"
             color={Colors.primary[500]}
           />
+        </View>
+      </View>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>App Settings</Text>
+        <View style={styles.settingsList}>
+          <Pressable
+            style={({ pressed }) => [styles.settingsItem, pressed && styles.pressed]}
+            onPress={() => router.push("/profile/settings")}
+          >
+            <View style={[styles.iconContainer, { backgroundColor: withOpacity(Colors.primary[500], 0.12) }]}>
+              <MaterialCommunityIcons name="cog-outline" size={24} color={Colors.primary[500]} />
+            </View>
+            <Text style={styles.settingsText}>Settings & Preferences</Text>
+            <MaterialCommunityIcons name="chevron-right" size={24} color={Colors.gray[400]} />
+          </Pressable>
         </View>
       </View>
 
@@ -122,7 +140,30 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.gray[200],
     marginVertical: Spacing.sm,
   },
+  settingsList: {
+    backgroundColor: Colors.background.secondary,
+    borderRadius: BorderRadius.xl,
+    overflow: "hidden",
+    ...Shadows.sm,
+  },
+  settingsItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: Spacing.md,
+    backgroundColor: Colors.background.secondary,
+  },
+  settingsText: {
+    flex: 1,
+    fontFamily: Typography.fontFamily.brandMedium,
+    fontSize: Typography.fontSize.lg,
+    color: Colors.text.primary,
+  },
+  pressed: {
+    opacity: 0.7,
+    backgroundColor: Colors.gray[100],
+  },
   logoutContainer: {
     marginTop: Spacing.xl,
+    paddingBottom: Spacing.xl,
   },
 });

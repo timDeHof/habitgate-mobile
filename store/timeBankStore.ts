@@ -30,6 +30,7 @@ interface TimeBankActions {
   getRemainingDailyCapacity: () => number;
   updateStreak: (completedToday: boolean) => void;
   resetStreak: () => void;
+  resetAll: () => void;
 }
 
 type TimeBankStore = TimeBankState & TimeBankActions;
@@ -163,6 +164,9 @@ export const useTimeBankStore = create<TimeBankStore>()(
       },
       resetStreak: () => {
         set({ currentStreak: 0 });
+      },
+      resetAll: () => {
+        set({ ...INITIAL_TIME_BANK_STATE });
       },
     }),
     {
